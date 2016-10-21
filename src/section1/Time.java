@@ -3,9 +3,9 @@ package section1;
 public class Time {
 	
 	public Time anchor;
-	public int ticSize;
-	public int origin;
-	public int tic;
+	public long ticSize;
+	public long origin;
+	public long tic;
 
 	public Time(Time anchor, int ticSize, int origin) {
 		this.anchor = anchor;
@@ -13,8 +13,12 @@ public class Time {
 		this.origin = origin;
 	}
 
-	public int getTime() {
+	public long getTime() {
 		return tic;
+	}
+	
+	private long getRealTime() {
+		return System.nanoTime();
 	}
 
 }
