@@ -1,6 +1,14 @@
 package gameobjectmodel;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
+import com.google.gson.reflect.TypeToken;
+
 import processing.core.PApplet;
+import section1.Time;
+import section2.Event;
+import section2.EventManager;
 import section2.FloatingPlatform;
 import section2.Server;
 
@@ -8,7 +16,15 @@ public class Physics extends PApplet implements Component {
 	
 	// reference the floating platform
 	public FloatingPlatform floatingPlatform;
+	private Type EventType = new TypeToken<Event>() {}.getType();
+	private EventManager events;
 	
+	public Physics(EventManager events) {
+		this.events = events;
+	}
+
+	public Physics() { }
+
 	public float sinWrap(float f) {
 		return sin(f);
 	}
@@ -19,6 +35,7 @@ public class Physics extends PApplet implements Component {
 	
 	// detect collisions for all the characters
 	public void collision() {
+		ArrayList<Event> eventList = new ArrayList<>();
 		try {
 			for (int j = 0; j < Server.characters.size(); j++) {
 				section2.Character c = Server.characters.get(j);
@@ -27,17 +44,18 @@ public class Physics extends PApplet implements Component {
 					if (c.type.equals("rect")) { // if its a rectangle
 						if (Server.immovables.get(i).type.equals("rect")) {
 							if (rectRectWrap(Server.immovables.get(i).shape, c.shape)) {
-								c.setToSpawnPoint();
+								events.eventPriorityQueue.add(new Event("collision", c.color, c.time.getTime()));
+								//c.setToSpawnPoint();
 							}
 						} else if (Server.immovables.get(i).type.equals("line")) {
 							if (lineRectWrap(Server.immovables.get(i).shape, c.shape)) {
-								c.setToSpawnPoint();
+								//c.setToSpawnPoint();
 							}
 						}
 					}
 				}
 				if (rectRectWrap(c.shape, floatingPlatform.shape)) {
-					c.setToSpawnPoint();
+					//c.setToSpawnPoint();
 				} 
 			}
 		} catch (Exception e) {

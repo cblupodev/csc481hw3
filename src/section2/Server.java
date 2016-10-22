@@ -48,8 +48,8 @@ public class Server implements GameObject {
 	
 	public void run() {
 		// add collidable stuff to the physics component
-		physics = new Physics();
 		events = new EventManager();
+		physics = new Physics(events);
 		realtime = new Time(null, 1, 0);
 		
 		// initialize the static objects
@@ -90,7 +90,8 @@ public class Server implements GameObject {
 					
 				// initialize the agent if the number of streams and agents aren't the same size
 				if (characters.size() != inStream.size()) { // add a character
-					c = new Character(windowWidth, windowHeight);
+					Time time = new Time(realtime, 100000, 0);
+					c = new Character(windowWidth, windowHeight, time);
 					characters.add(i, c);
 					events.registerMap.put("keyboard", c);
 					System.out.println("Character registered");
@@ -101,7 +102,7 @@ public class Server implements GameObject {
 					
 					// send the non changing values to the client
 					ServerClientInitializationMessage scim = new ServerClientInitializationMessage();
-					scim.time = new Time(realtime, 100000, 0);
+					scim.time = time; // tice isize is just arbitrary for now
 					scim.rectFloat = floatingPlatform.shape;
 					scim.rectFoundation1 = rectFoundation1.shape;
 					scim.rectFoundation2 = rectFoundation2.shape;

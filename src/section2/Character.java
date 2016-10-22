@@ -4,25 +4,27 @@ import gameobjectmodel.GameObject;
 import gameobjectmodel.Movable;
 import gameobjectmodel.Physics;
 import processing.core.PApplet;
+import section1.Time;
 
 public class Character extends Movable implements GameObject {
 
-	float originalX; // original x position
-	float originalY; // original y position
-	int[] color; // character color
-	boolean jumping = false; // is it jumping?
-	float jumpingAngle = 180f; // the jumping angle
-	int windowHeight; // sketch height
+	public float originalX; // original x position
+	public float originalY; // original y position
+	public int[] color; // character color
+	public boolean jumping = false; // is it jumping?
+	public float jumpingAngle = 180f; // the jumping angle
+	private int windowHeight; // sketch height
+	public Time time;
 
-	Physics physics = new Physics(); // keep reference to physics so it can
-										// update the character
+	Physics physics = new Physics(); // keep reference to physics so it can update the character
 
-	public Character(int windowWidth, int windowHeight) {
+	public Character(int windowWidth, int windowHeight, Time time) {
 		this.type = "rect";
 		this.shape = new float[] { windowWidth * .1f, windowHeight * .9f - 50, 25, 50 };
 		this.originalX = shape[0];
 		this.originalY = shape[1];
 		this.windowHeight = windowHeight;
+		this.time = time;
 	}
 
 	public Character update() {

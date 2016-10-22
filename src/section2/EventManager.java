@@ -10,10 +10,10 @@ import gameobjectmodel.GameObject;
 
 public class EventManager {
 	
-	ConcurrentHashMap<String, GameObject> registerMap;
+	public ConcurrentHashMap<String, GameObject> registerMap;
 	
 	//BlockingQueue <Event> eventPriorityQueue;
-	Queue<Event> eventPriorityQueue;
+	public Queue<Event> eventPriorityQueue;
 
 	public EventManager() { 
 		registerMap = new ConcurrentHashMap<>();
