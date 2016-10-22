@@ -1,7 +1,9 @@
 package section2;
 
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import gameobjectmodel.GameObject;
@@ -10,9 +12,14 @@ public class EventManager {
 	
 	ConcurrentHashMap<String, GameObject> registerMap;
 	
-	PriorityBlockingQueue<Event> eventPriorityQueue;
+	//BlockingQueue <Event> eventPriorityQueue;
+	Queue<Event> eventPriorityQueue;
 
-	public EventManager() { }
+	public EventManager() { 
+		registerMap = new ConcurrentHashMap<>();
+		eventPriorityQueue = new PriorityBlockingQueue<Event>();
+		//eventPriorityQueue = new ConcurrentLinkedQueue<Event>();
+	}
 	
 	public void register(String type, GameObject handler) {
 		registerMap.put(type, handler);
@@ -27,8 +34,6 @@ public class EventManager {
 			Event e = eventPriorityQueue.remove();
 			GameObject go = registerMap.get(e.type);
 			go.onEvent(e);
-			Set<String> s = registerMap.keySet();
-			foreach (String )
 		}
 	}
 	

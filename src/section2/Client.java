@@ -15,6 +15,7 @@ import com.google.gson.reflect.TypeToken;
 import gameobjectmodel.Drawing;
 import gameobjectmodel.GameObject;
 import processing.core.PApplet;
+import section1.Time;
 
 public class Client extends PApplet implements GameObject {
 	
@@ -30,6 +31,7 @@ public class Client extends PApplet implements GameObject {
 	private int windowHeight;
 	private float[] rectFoundation1;
 	private float[] rectFoundation2;
+	private Time gametime;
 	
 	private Gson gson; // google json parser
 	private Type ServerClientMessageType; // type for gson parsing
@@ -40,7 +42,7 @@ public class Client extends PApplet implements GameObject {
 	public static void main(String[] args) {
 		Client c = new Client();
 		c.address = args[0];
-		PApplet.main("csc481hw2.section3.Client");
+		PApplet.main("section2.Client");
 	}
 
 	
@@ -77,6 +79,7 @@ public class Client extends PApplet implements GameObject {
 		try {
 				i = reader.readLine();
 				ServerClientInitializationMessage initMessage = gson.fromJson(i,ServerClientInitializationMessageType);
+				gametime = initMessage.time;
 				rectFoundation1 = initMessage.rectFoundation1;
 				rectFoundation2 = initMessage.rectFoundation2;
 				windowWidth = initMessage.windowWidth;
@@ -122,17 +125,20 @@ public class Client extends PApplet implements GameObject {
 	
 	// send keyboard input to the server so it can update character
 	private void sendInputToServer() {
+		String out = "";
 		if (keyPressed) { // move the agent if the key is pressed
 			if (keyCode == LEFT) {
-				writer.println("LEFT");
+				out  = "LEFT";
 			}
 			if (keyCode == RIGHT) {
-				String out = gson.toJson(new Event("keyboard", "LEFT", 16), EventType);
-				writer.println(out);
-				//writer.println("RIGHT");
+				out = "RIGHT";
 			}
 			if (key == ' ') { // begin jumping
-				writer.println("SPACE");
+				out = "SPACE";
+			}
+			if (out.isEmpty() == false) {
+				out = gson.toJson(new Event("keyboard", out, gametime.getTime()), EventType);
+				writer.println(out);
 			}
 		}
 		writer.flush();

@@ -16,6 +16,7 @@ import gameobjectmodel.Immovable;
 import gameobjectmodel.Movable;
 import gameobjectmodel.Physics;
 import processing.core.PApplet;
+import section1.Time;
 
 public class Server implements GameObject {
 	
@@ -29,6 +30,7 @@ public class Server implements GameObject {
 	public FloatingPlatform floatingPlatform = new FloatingPlatform(windowWidth, windowHeight);
 	private Physics physics;
 	private EventManager events;
+	private Time realtime;
 	
 	public static ArrayList<Immovable> immovables = new ArrayList<>(); // list of specific objects to collide with
 	public static ArrayList<Movable> movables = new ArrayList<>(); // not used yet
@@ -47,8 +49,8 @@ public class Server implements GameObject {
 	public void run() {
 		// add collidable stuff to the physics component
 		physics = new Physics();
-		
 		events = new EventManager();
+		realtime = new Time(null, 1, 0);
 		
 		// initialize the static objects
 		Immovable rectFoundation1 = new Immovable("rect", new float[] {0, windowHeight*.9f, windowWidth*.75f, windowHeight*.1f});
@@ -99,6 +101,7 @@ public class Server implements GameObject {
 					
 					// send the non changing values to the client
 					ServerClientInitializationMessage scim = new ServerClientInitializationMessage();
+					scim.time = new Time(realtime, 100000, 0);
 					scim.rectFloat = floatingPlatform.shape;
 					scim.rectFoundation1 = rectFoundation1.shape;
 					scim.rectFoundation2 = rectFoundation2.shape;
@@ -106,14 +109,15 @@ public class Server implements GameObject {
 					scim.windowHeight = windowHeight;
 					out.println(gson.toJson(scim, ServerClientInitializationMessageType));
 					out.flush();
-					System.out.println("init sent");
 				} else {
 					c = characters.get(i);
 					characters.set(i, readInputFromClient(i, c, inStream.get(i), out)); // read input from client
 					// UPDATE
 					if (frame % 10000 == 0) { // need the frames or else it will update everything to quickly before you can read input
-						events.handle();
-						System.out.println("event handle");
+						if (!events.eventPriorityQueue.isEmpty()) {
+							events.handle();
+							System.out.println("event handle");
+						}
 						physics.collision();
 						characters.set(i, c.update());
 						floatingPlatform.update();
