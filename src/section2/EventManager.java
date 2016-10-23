@@ -13,7 +13,7 @@ public class EventManager {
 	public ConcurrentHashMap<String, GameObject> registerMap;
 	
 	//BlockingQueue <Event> eventPriorityQueue;
-	public Queue<Event> eventPriorityQueue;
+	private Queue<Event> eventPriorityQueue;
 
 	public EventManager() { 
 		registerMap = new ConcurrentHashMap<>();
@@ -30,11 +30,21 @@ public class EventManager {
 	}
 	
 	public void handle() {
-		if (eventPriorityQueue.peek() != null) {
+		while (eventPriorityQueue.peek() != null) { // handle all the events in one game loop, unles you run this in a new thread
 			Event e = eventPriorityQueue.remove();
 			GameObject go = registerMap.get(e.type);
 			go.onEvent(e);
 		}
+	}
+	
+	public void addEvent(Event e) {
+		if (eventPriorityQueue.contains(e) == false) {
+			eventPriorityQueue.add(e);
+		}
+	}
+
+	public boolean isEmpty() {
+		return eventPriorityQueue.isEmpty();
 	}
 	
 }

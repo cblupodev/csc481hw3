@@ -13,6 +13,7 @@ public class CharacterClient extends Movable implements GameObject {
 	public float jumpingAngle = 180f; // the jumping angle
 	private int windowHeight; // sketch height
 
+	// TODO put this in the constructor
 	private Physics physics = new Physics(); // keep reference to physics so it can update the character
 
 	public CharacterClient(int windowWidth, int windowHeight) {

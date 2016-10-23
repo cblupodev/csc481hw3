@@ -96,6 +96,7 @@ public class Server implements GameObject {
 					events.registerMap.put("keyboard", c);
 					events.registerMap.put("collision", c);
 					events.registerMap.put("spawn", c);
+					events.registerMap.put("death", c);
 					// select random character
 					Random r = new Random();
 					c.color = new int[] {r.nextInt(255), r.nextInt(255), r.nextInt(255)};
@@ -115,7 +116,7 @@ public class Server implements GameObject {
 					characters.set(i, readInputFromClient(i, c, inStream.get(i), out)); // read input from client
 					// UPDATE
 					if (frame % 10000 == 0) { // need the frames or else it will update everything to quickly before you can read input
-						if (!events.eventPriorityQueue.isEmpty()) {
+						if (events.isEmpty() == false) {
 							events.handle();
 						}
 						physics.collision();
@@ -155,7 +156,7 @@ public class Server implements GameObject {
 			if (r.ready()) {
 				String message = r.readLine();
 				Event e = gson.fromJson(message, EventType);
-				events.eventPriorityQueue.add(e);
+				events.addEvent(e);
 				boolean keypressed = false;
 				//keypressed = c.updateInput(message);
 				if (keypressed) {

@@ -93,11 +93,16 @@ public class CharacterServer extends Movable implements GameObject {
 			updateInput(s);
 			break;
 		case "collision":
-			events.eventPriorityQueue.add(new Event("spawn", null, time.getTime()));
+			events.addEvent(new Event("death", null, time.getTime()));
+			break;
+		case "death": 
+			events.addEvent(new Event("spawn", null, time.getTime()));
 			break;
 		case "spawn":
-			System.out.println("try to spawn");
 			setToSpawnPoint();
+			break;
+		default:
+			break;
 		}
 	}
 }
