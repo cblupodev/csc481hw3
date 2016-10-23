@@ -24,7 +24,7 @@ public class Server implements GameObject {
 	public static int windowHeight = 400;
 	
 	// use the thread safe collections because they are being added and read from different threads
-	public static CopyOnWriteArrayList<Character> characters = new CopyOnWriteArrayList<>(); // list of characters
+	public static CopyOnWriteArrayList<CharacterServer> characters = new CopyOnWriteArrayList<>(); // list of characters
 	public static CopyOnWriteArrayList<BufferedReader> inStream = new CopyOnWriteArrayList<>(); // list of socket input streams
 	public static CopyOnWriteArrayList<PrintWriter> outStream = new CopyOnWriteArrayList<>(); // list of socket output streams
 	public FloatingPlatform floatingPlatform = new FloatingPlatform(windowWidth, windowHeight);
@@ -81,7 +81,7 @@ public class Server implements GameObject {
 		// read from clients
 		int frame = -1;
 		PrintWriter out = null;
-		Character c;
+		CharacterServer c;
 		while (true) { // never stop looking
 			frame++;
 			for (int i = 0; i < inStream.size(); i++) { // iterate over the client streams
@@ -91,14 +91,14 @@ public class Server implements GameObject {
 				// initialize the agent if the number of streams and agents aren't the same size
 				if (characters.size() != inStream.size()) { // add a character
 					Time time = new Time(realtime, 100000, 0);
-					c = new Character(windowWidth, windowHeight, time);
+					c = new CharacterServer(windowWidth, windowHeight, time, events, physics);
 					characters.add(i, c);
 					events.registerMap.put("keyboard", c);
-					System.out.println("Character registered");
+					events.registerMap.put("collision", c);
+					events.registerMap.put("spawn", c);
 					// select random character
 					Random r = new Random();
 					c.color = new int[] {r.nextInt(255), r.nextInt(255), r.nextInt(255)};
-					c.physics = this.physics;
 					
 					// send the non changing values to the client
 					ServerClientInitializationMessage scim = new ServerClientInitializationMessage();
@@ -117,7 +117,6 @@ public class Server implements GameObject {
 					if (frame % 10000 == 0) { // need the frames or else it will update everything to quickly before you can read input
 						if (!events.eventPriorityQueue.isEmpty()) {
 							events.handle();
-							System.out.println("event handle");
 						}
 						physics.collision();
 						characters.set(i, c.update());
@@ -141,7 +140,7 @@ public class Server implements GameObject {
 		message.cjumpingAngle.clear();
 		message.cColor.clear();
 		message.floatPlatformShapeMessage = floatingPlatform.shape;
-		for (Character c : characters) {
+		for (CharacterServer c : characters) {
 			message.cShapes.add(c.shape);
 			message.cJumping.add(c.jumping);
 			message.cjumpingAngle.add(c.jumpingAngle);
@@ -151,13 +150,12 @@ public class Server implements GameObject {
 	}
 
 	// read keyboard input from client
-	private Character readInputFromClient(int i, Character c, BufferedReader r, PrintWriter writer) {
+	private CharacterServer readInputFromClient(int i, CharacterServer c, BufferedReader r, PrintWriter writer) {
 		try {
 			if (r.ready()) {
 				String message = r.readLine();
 				Event e = gson.fromJson(message, EventType);
 				events.eventPriorityQueue.add(e);
-				System.out.println("event raised");
 				boolean keypressed = false;
 				//keypressed = c.updateInput(message);
 				if (keypressed) {

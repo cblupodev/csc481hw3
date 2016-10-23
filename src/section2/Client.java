@@ -26,7 +26,7 @@ public class Client extends PApplet implements GameObject {
 	private Socket socket = null;
 	private String address = ""; // socket address
 	private ServerClientMessage lastMessage; // remember the last address that was send from the client, so don't get NPE
-	private ArrayList<Character> characters = new ArrayList<>(); // list of characters to display to the screen
+	private ArrayList<CharacterClient> characters = new ArrayList<>(); // list of characters to display to the screen
 	private int windowWidth;
 	private int windowHeight;
 	private float[] rectFoundation1;
@@ -92,7 +92,7 @@ public class Client extends PApplet implements GameObject {
 	}
 
 	FloatingPlatform fp = new FloatingPlatform(windowWidth, windowHeight); // keep reference so not allocating memory each time
-	Character c; // keep reference so not allocating memory each time
+	CharacterClient c; // keep reference so not allocating memory each time
 	public void draw() {
 			// read the character object from the server. the server does the updating
 			ServerClientMessage message;
@@ -109,7 +109,7 @@ public class Client extends PApplet implements GameObject {
 				fp.draw(this);
 				for (int i = 0; i < message.cShapes.size(); i++) { // draw the characters
 					if (message.cShapes.size() > characters.size()) { // if a new client connected and thus character added, then add to the list
-						Character c = new Character(windowWidth, windowHeight);
+						CharacterClient c = new CharacterClient(windowWidth, windowHeight);
 						characters.add(c);
 					}
 					// update the characters

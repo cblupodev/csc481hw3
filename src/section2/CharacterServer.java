@@ -6,7 +6,7 @@ import gameobjectmodel.Physics;
 import processing.core.PApplet;
 import section1.Time;
 
-public class Character extends Movable implements GameObject {
+public class CharacterServer extends Movable implements GameObject {
 
 	public float originalX; // original x position
 	public float originalY; // original y position
@@ -16,18 +16,21 @@ public class Character extends Movable implements GameObject {
 	private int windowHeight; // sketch height
 	public Time time;
 
-	Physics physics = new Physics(); // keep reference to physics so it can update the character
+	private Physics physics = new Physics(); // keep reference to physics so it can update the character
+	public EventManager events;
 
-	public Character(int windowWidth, int windowHeight, Time time) {
+	public CharacterServer(int windowWidth, int windowHeight, Time time, EventManager events, Physics physics2) {
 		this.type = "rect";
 		this.shape = new float[] { windowWidth * .1f, windowHeight * .9f - 50, 25, 50 };
 		this.originalX = shape[0];
 		this.originalY = shape[1];
 		this.windowHeight = windowHeight;
 		this.time = time;
+		this.events = events;
+		this.physics = physics2;
 	}
 
-	public Character update() {
+	public CharacterServer update() {
 		// redraw the agent if it's in the process of jumping
 		if (jumping) {
 			// used that colliding circles example from processing.org
@@ -84,7 +87,17 @@ public class Character extends Movable implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
-		String s = (String) e.parameters;
-		updateInput(s);
+		switch (e.type) {
+		case "keyboard":
+			String s = (String) e.parameters;
+			updateInput(s);
+			break;
+		case "collision":
+			events.eventPriorityQueue.add(new Event("spawn", null, time.getTime()));
+			break;
+		case "spawn":
+			System.out.println("try to spawn");
+			setToSpawnPoint();
+		}
 	}
 }
