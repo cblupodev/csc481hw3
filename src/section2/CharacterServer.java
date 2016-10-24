@@ -1,5 +1,7 @@
 package section2;
 
+import java.util.Arrays;
+
 import gameobjectmodel.GameObject;
 import gameobjectmodel.Movable;
 import gameobjectmodel.Physics;
@@ -15,11 +17,13 @@ public class CharacterServer extends Movable implements GameObject {
 	public float jumpingAngle = 180f; // the jumping angle
 	private int windowHeight; // sketch height
 	public Time time;
+	public int id;
 
 	private Physics physics = new Physics(); // keep reference to physics so it can update the character
 	public EventManager events;
 
-	public CharacterServer(int windowWidth, int windowHeight, Time time, EventManager events, Physics physics2) {
+	public CharacterServer(int id, int windowWidth, int windowHeight, Time time, EventManager events, Physics physics2) {
+		this.id = id;
 		this.type = "rect";
 		this.shape = new float[] { windowWidth * .1f, windowHeight * .9f - 50, 25, 50 };
 		this.originalX = shape[0];
@@ -87,22 +91,17 @@ public class CharacterServer extends Movable implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
-		switch (e.type) {
-		case "keyboard":
+		if (e.type.equals("keyboard,"+id)) {
 			String s = (String) e.parameters;
 			updateInput(s);
-			break;
-		case "collision":
-			events.addEvent(new Event("death", null, time.getTime()));
-			break;
-		case "death": 
-			events.addEvent(new Event("spawn", null, time.getTime()));
-			break;
-		case "spawn":
+		} else if (e.type.equals("collision,"+id)) {
+			events.addEvent(new Event("death,"+id, null, time.getTime(), 1, 0));
+		} else if (e.type.equals("death,"+id)) {
+			events.addEvent(new Event("spawn,"+id, null, time.getTime() - 100000000, 2, 0));
+		} else if (e.type.equals("spawn,"+id)) {
 			setToSpawnPoint();
-			break;
-		default:
-			break;
+		} else {
+			System.out.println("didnt find an event type");
 		}
 	}
 }

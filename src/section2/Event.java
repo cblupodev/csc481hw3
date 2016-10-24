@@ -1,6 +1,37 @@
 package section2;
 
-public class Event implements Comparable {
+public class Event implements Comparable<Object> {
+
+	public String type;
+	public Object parameters;
+	public long timestamp;
+	public int age;
+	public int priority; // most important priorities start at 0
+	
+	public Event(String type, Object parameters, long timestamp, int age, int priority) {
+		this.type = type;
+		this.parameters = parameters;
+		this.timestamp = timestamp;
+	}
+
+	@Override
+	public int compareTo(Object arg0) {
+		Event e = (Event) arg0;
+		int rtn = 0;
+		// compare based on priorities first
+		if (this.priority == e.priority) {
+			rtn = 0;
+		} else if (this.priority < e.priority) {
+			if (this.timestamp < e.timestamp) {
+				rtn = -1;
+			} else {
+				rtn = 1;
+			}
+		} else {
+			rtn = 1;
+		}
+		return rtn;
+	}
 	
 	@Override
 	public int hashCode() {
@@ -29,29 +60,4 @@ public class Event implements Comparable {
 			return false;
 		return true;
 	}
-
-	public String type;
-	public Object parameters;
-	public long timestamp;
-	public int age;
-	public int order; // priority subdivision within the game loop
-	
-	public Event(String type, Object parameters, long timestamp) {
-		this.type = type;
-		this.parameters = parameters;
-		this.timestamp = timestamp;
-	}
-
-	@Override
-	public int compareTo(Object arg0) {
-		Event e = (Event) arg0;
-		if (this.timestamp == e.timestamp) {
-			return 0;
-		} else if(this.timestamp < e.timestamp) {
-			return -1;
-		} else {
-			return 1;
-		}
-	}
-	
 }

@@ -12,5 +12,5 @@ public class ServerClientInitializationMessage {
 	public float[] rectFoundation2;
 	public float[] rectFloat;
 	public Time time;
-	
+	public int id;
 }

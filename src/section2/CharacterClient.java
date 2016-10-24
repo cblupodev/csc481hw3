@@ -12,11 +12,13 @@ public class CharacterClient extends Movable implements GameObject {
 	public boolean jumping = false; // is it jumping?
 	public float jumpingAngle = 180f; // the jumping angle
 	private int windowHeight; // sketch height
+	public int id;
 
 	// TODO put this in the constructor
 	private Physics physics = new Physics(); // keep reference to physics so it can update the character
 
-	public CharacterClient(int windowWidth, int windowHeight) {
+	public CharacterClient(int id, int windowWidth, int windowHeight) {
+		this.id = id;
 		this.type = "rect";
 		this.shape = new float[] { windowWidth * .1f, windowHeight * .9f - 50, 25, 50 };
 		this.originalX = shape[0];

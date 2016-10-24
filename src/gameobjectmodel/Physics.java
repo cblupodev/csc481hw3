@@ -44,17 +44,17 @@ public class Physics extends PApplet implements Component {
 					if (c.type.equals("rect")) { // if its a rectangle
 						if (Server.immovables.get(i).type.equals("rect")) {
 							if (rectRectWrap(Server.immovables.get(i).shape, c.shape)) {
-								events.addEvent(new Event("collision", c.color, c.time.getTime()));
+								events.addEvent(new Event("collision,"+j, c.color, c.time.getTime(), 0, 0)); // TODO do i need this color paramter
 							}
 						} else if (Server.immovables.get(i).type.equals("line")) {
 							if (lineRectWrap(Server.immovables.get(i).shape, c.shape)) {
-								events.addEvent(new Event("collision", c.color, c.time.getTime()));
+								events.addEvent(new Event("collision,"+j, c.color, c.time.getTime(), 0, 0));
 							}
 						}
 					}
 				}
 				if (rectRectWrap(c.shape, floatingPlatform.shape)) {
-					events.addEvent(new Event("collision", c.color, c.time.getTime()));
+					events.addEvent(new Event("collision,"+j, c.color, c.time.getTime(), 0, 0));
 				} 
 			}
 		} catch (Exception e) {

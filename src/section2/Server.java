@@ -91,12 +91,12 @@ public class Server implements GameObject {
 				// initialize the agent if the number of streams and agents aren't the same size
 				if (characters.size() != inStream.size()) { // add a character
 					Time time = new Time(realtime, 100000, 0);
-					c = new CharacterServer(windowWidth, windowHeight, time, events, physics);
+					c = new CharacterServer(i, windowWidth, windowHeight, time, events, physics);
 					characters.add(i, c);
-					events.registerMap.put("keyboard", c);
-					events.registerMap.put("collision", c);
-					events.registerMap.put("spawn", c);
-					events.registerMap.put("death", c);
+					events.registerMap.put("keyboard,"+i, c);
+					events.registerMap.put("collision,"+i, c);
+					events.registerMap.put("spawn,"+i, c);
+					events.registerMap.put("death,"+i, c);
 					// select random character
 					Random r = new Random();
 					c.color = new int[] {r.nextInt(255), r.nextInt(255), r.nextInt(255)};
@@ -109,6 +109,7 @@ public class Server implements GameObject {
 					scim.rectFoundation2 = rectFoundation2.shape;
 					scim.windowWidth = windowWidth;
 					scim.windowHeight = windowHeight;
+					scim.id = i;
 					out.println(gson.toJson(scim, ServerClientInitializationMessageType));
 					out.flush();
 				} else {

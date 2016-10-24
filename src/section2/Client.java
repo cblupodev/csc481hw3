@@ -32,6 +32,7 @@ public class Client extends PApplet implements GameObject {
 	private float[] rectFoundation1;
 	private float[] rectFoundation2;
 	private Time gametime;
+	private int id;
 	
 	private Gson gson; // google json parser
 	private Type ServerClientMessageType; // type for gson parsing
@@ -84,6 +85,7 @@ public class Client extends PApplet implements GameObject {
 				rectFoundation2 = initMessage.rectFoundation2;
 				windowWidth = initMessage.windowWidth;
 				windowHeight = initMessage.windowHeight;
+				id = initMessage.id;
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -109,7 +111,7 @@ public class Client extends PApplet implements GameObject {
 				fp.draw(this);
 				for (int i = 0; i < message.cShapes.size(); i++) { // draw the characters
 					if (message.cShapes.size() > characters.size()) { // if a new client connected and thus character added, then add to the list
-						CharacterClient c = new CharacterClient(windowWidth, windowHeight);
+						CharacterClient c = new CharacterClient(characters.size() - 1, windowWidth, windowHeight); // new id will always be the size - 1
 						characters.add(c);
 					}
 					// update the characters
@@ -137,7 +139,7 @@ public class Client extends PApplet implements GameObject {
 				out = "SPACE";
 			}
 			if (out.isEmpty() == false) {
-				out = gson.toJson(new Event("keyboard", out, gametime.getTime()), EventType);
+				out = gson.toJson(new Event("keyboard,"+id, out, gametime.getTime(), 0, 1), EventType);
 				writer.println(out);
 			}
 		}

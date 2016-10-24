@@ -1,4 +1,4 @@
-keyboard
-collision
-spawn
-death
+keyboard,<id>
+collision,<id>
+spawn,<id>
+death,<id>
