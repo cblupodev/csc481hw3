@@ -6,7 +6,7 @@ import java.util.ArrayList;
 // I'm passing fields because if I send the whole objects it really slows down the message passing
 
 public class ServerClientMessage {
-	float[] floatPlatformShapeMessage;
+	float[]            floatPlatformShapeMessage;
 	ArrayList<float[]> cShapes = new ArrayList<>();
 	ArrayList<Boolean> cJumping = new ArrayList<>();
 	ArrayList<Float>   cjumpingAngle = new ArrayList<>();

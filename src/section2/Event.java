@@ -8,10 +8,9 @@ public class Event implements Comparable<Object> {
 	public int age;
 	public int priority; // most important priorities start at 0
 	
-	public Event(String type, Object parameters, long timestamp, int age, int priority) {
+	public Event(String type, Object parameters, int age, int priority) {
 		this.type = type;
 		this.parameters = parameters;
-		this.timestamp = timestamp;
 	}
 
 	@Override

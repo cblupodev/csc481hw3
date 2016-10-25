@@ -16,20 +16,18 @@ public class CharacterServer extends Movable implements GameObject {
 	public boolean jumping = false; // is it jumping?
 	public float jumpingAngle = 180f; // the jumping angle
 	private int windowHeight; // sketch height
-	public Time time;
 	public int id;
 
 	private Physics physics = new Physics(); // keep reference to physics so it can update the character
 	public EventManager events;
 
-	public CharacterServer(int id, int windowWidth, int windowHeight, Time time, EventManager events, Physics physics2) {
+	public CharacterServer(int id, int windowWidth, int windowHeight, EventManager events, Physics physics2) {
 		this.id = id;
 		this.type = "rect";
 		this.shape = new float[] { windowWidth * .1f, windowHeight * .9f - 50, 25, 50 };
 		this.originalX = shape[0];
 		this.originalY = shape[1];
 		this.windowHeight = windowHeight;
-		this.time = time;
 		this.events = events;
 		this.physics = physics2;
 	}
@@ -95,9 +93,9 @@ public class CharacterServer extends Movable implements GameObject {
 			String s = (String) e.parameters;
 			updateInput(s);
 		} else if (e.type.equals("collision,"+id)) {
-			events.addEvent(new Event("death,"+id, null, time.getTime(), 1, 0));
+			events.addEvent(new Event("death,"+id, null, 1, 0));
 		} else if (e.type.equals("death,"+id)) {
-			events.addEvent(new Event("spawn,"+id, null, time.getTime() - 100000000, 2, 0));
+			events.addEvent(new Event("spawn,"+id, null, 2, 0));
 		} else if (e.type.equals("spawn,"+id)) {
 			setToSpawnPoint();
 		} else {

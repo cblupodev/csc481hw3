@@ -31,6 +31,7 @@ public class Server implements GameObject {
 	private Physics physics;
 	private EventManager events;
 	private Time realtime;
+	public static Time gametime;
 	
 	public static ArrayList<Immovable> immovables = new ArrayList<>(); // list of specific objects to collide with
 	public static ArrayList<Movable> movables = new ArrayList<>(); // not used yet
@@ -78,6 +79,9 @@ public class Server implements GameObject {
 		Thread t = new Thread(new ServerAccept());
 		t.start();
 		
+		gametime = new Time(realtime, 100000, 0);
+		events.register("keyboard", this);
+		
 		// read from clients
 		int frame = -1;
 		PrintWriter out = null;
@@ -90,8 +94,8 @@ public class Server implements GameObject {
 					
 				// initialize the agent if the number of streams and agents aren't the same size
 				if (characters.size() != inStream.size()) { // add a character
-					Time time = new Time(realtime, 100000, 0);
-					c = new CharacterServer(i, windowWidth, windowHeight, time, events, physics);
+					
+					c = new CharacterServer(i, windowWidth, windowHeight, events, physics);
 					characters.add(i, c);
 					events.registerMap.put("keyboard,"+i, c);
 					events.registerMap.put("collision,"+i, c);
@@ -103,7 +107,6 @@ public class Server implements GameObject {
 					
 					// send the non changing values to the client
 					ServerClientInitializationMessage scim = new ServerClientInitializationMessage();
-					scim.time = time; // tice isize is just arbitrary for now
 					scim.rectFloat = floatingPlatform.shape;
 					scim.rectFoundation1 = rectFoundation1.shape;
 					scim.rectFoundation2 = rectFoundation2.shape;
@@ -174,7 +177,9 @@ public class Server implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
-		// TODO Auto-generated method stub
+		if (((String)e.parameters).equals("pause")) {
+			//floatingPlatform
+		}
 		
 	}
 }

@@ -9,7 +9,7 @@ import gameobjectmodel.GameObject;
 public class EventManager {
 	
 	public ConcurrentHashMap<String, GameObject> registerMap;
-	
+	private Replay replays = new Replay();
 	private Queue<Event> eventPriorityQueue;
 
 	public EventManager() {
@@ -34,7 +34,9 @@ public class EventManager {
 	}
 	
 	public void addEvent(Event e) {
+		e.timestamp = Server.gametime.getTime();
 		eventPriorityQueue.add(e);
+		replays.log.add(e);
 	}
 
 	public boolean isEmpty() {

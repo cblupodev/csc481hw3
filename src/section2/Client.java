@@ -31,7 +31,6 @@ public class Client extends PApplet implements GameObject {
 	private int windowHeight;
 	private float[] rectFoundation1;
 	private float[] rectFoundation2;
-	private Time gametime;
 	private int id;
 	
 	private Gson gson; // google json parser
@@ -80,7 +79,6 @@ public class Client extends PApplet implements GameObject {
 		try {
 				i = reader.readLine();
 				ServerClientInitializationMessage initMessage = gson.fromJson(i,ServerClientInitializationMessageType);
-				gametime = initMessage.time;
 				rectFoundation1 = initMessage.rectFoundation1;
 				rectFoundation2 = initMessage.rectFoundation2;
 				windowWidth = initMessage.windowWidth;
@@ -138,8 +136,11 @@ public class Client extends PApplet implements GameObject {
 			if (key == ' ') { // begin jumping
 				out = "SPACE";
 			}
+			if (key == 'r') {
+				out = "r";
+			}
 			if (out.isEmpty() == false) {
-				out = gson.toJson(new Event("keyboard,"+id, out, gametime.getTime(), 0, 1), EventType);
+				out = gson.toJson(new Event("keyboard,"+id, out, 0, 1), EventType); // TODO timestamp this on the server not on the client
 				writer.println(out);
 			}
 		}
