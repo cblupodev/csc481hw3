@@ -52,11 +52,9 @@ public class Server implements GameObject {
 		events = new EventManager();
 		physics = new Physics(events);
 		realtime = new Time(null, 1, 0);
-		
 		// initialize the static objects
 		Immovable rectFoundation1 = new Immovable("rect", new float[] {0, windowHeight*.9f, windowWidth*.75f, windowHeight*.1f});
 		Immovable rectFoundation2 = new Immovable("line", new float[] {windowWidth - (windowWidth*.15f), windowHeight*.9f, windowWidth*.15f, windowHeight*.1f});
-		
 		Immovable boundaryLeft = new Immovable("line", new float[] {0, 0, 0, windowHeight});
 		Immovable boundaryRight = new Immovable("line", new float[] {windowWidth, 0, windowWidth, windowHeight});
 		Immovable rectPit = new Immovable("rect", new float[] {
@@ -65,21 +63,20 @@ public class Server implements GameObject {
 				windowWidth - (rectFoundation1.shape[2]+rectFoundation2.shape[2]) - 20, 
 				rectFoundation1.shape[3]
 		});
-		
 		immovables.add(boundaryLeft);
 		immovables.add(boundaryRight);
 		immovables.add(rectPit);
-		
 		gson = new Gson();
 		ServerClientInitializationMessageType = new TypeToken<ServerClientInitializationMessage>() {}.getType();
 		ServerClientMessageType = new TypeToken<ServerClientMessage>() {}.getType();
 		EventType = new TypeToken<Event>() {}.getType();
+
 		
 		// start the thread that accepts incoming connections
 		Thread t = new Thread(new ServerAccept());
 		t.start();
 		
-		gametime = new Time(realtime, 100000, 0);
+		gametime = new Time(realtime, 1000000, 0); // this should be on a millisecond timescale
 		events.register("keyboard", this);
 		
 		// read from clients
@@ -160,12 +157,26 @@ public class Server implements GameObject {
 			if (r.ready()) {
 				String message = r.readLine();
 				Event e = gson.fromJson(message, EventType);
-				events.addEvent(e);
-				boolean keypressed = false;
-				//keypressed = c.updateInput(message);
-				if (keypressed) {
-					characters.set(i, c);
-					return c;
+				boolean cont = true;
+				String p = (String)e.parameters;
+				if (events.isRecording == true) {
+					if (p.equals("r")) {
+						 cont = false; // don't do anything if already recording
+					}
+				} if (events.isRecording == false) {
+					if (p.equals("s")) {
+						cont = false;
+						// continue as before, don't add a useless event
+					}
+				}
+				if (cont == true) {
+					events.addEvent(e);
+					boolean keypressed = false;
+					//keypressed = c.updateInput(message);
+					if (keypressed) {
+						characters.set(i, c);
+						return c;
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -177,9 +188,13 @@ public class Server implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
-		if (((String)e.parameters).equals("pause")) {
-			//floatingPlatform
+		if (((String)e.parameters).equals("r")) {
+			System.out.println("r");
+			events.isRecording = true;
+		} else if (((String)e.parameters).equals("s")) {
+			System.out.println("s");
+			events.isRecording = false;
+			// go into replay mode
 		}
-		
 	}
 }

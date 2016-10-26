@@ -2,3 +2,6 @@ keyboard,<id>
 collision,<id>
 spawn,<id>
 death,<id>
+
+"r" is record
+"s" is stop recording and automatically go into the replay

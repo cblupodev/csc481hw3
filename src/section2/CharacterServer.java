@@ -50,19 +50,22 @@ public class CharacterServer extends Movable implements GameObject {
 
 	// send keyboard inputs to server
 	private boolean updateInput(String message) {
-		if (message.equals("LEFT")) {
-			shape[0] -= 5; // move x position left
-			return true;
-		}
-		if (message.equals("RIGHT")) {
-			shape[0] += 5; // move x position right
-			return true;
-		}
-		if (message.equals("SPACE")) {
-			if (jumping == false) {
-				jumping = true;
+		initializeTick();
+		if (continueUpdate() == true) {
+			if (message.equals("LEFT")) {
+				shape[0] -= (float)diff / 40; // move x position left
+				return true;
 			}
-			return true;
+			if (message.equals("RIGHT")) {
+				shape[0] += (float)diff / 40; // move x position right
+				return true;
+			}
+			if (message.equals("SPACE")) {
+				if (jumping == false) {
+					jumping = true;
+				}
+				return true;
+			}
 		}
 		return false;
 	}
@@ -89,6 +92,7 @@ public class CharacterServer extends Movable implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
+		System.err.println("x");
 		if (e.type.equals("keyboard,"+id)) {
 			String s = (String) e.parameters;
 			updateInput(s);

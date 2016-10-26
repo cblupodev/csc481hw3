@@ -139,6 +139,9 @@ public class Client extends PApplet implements GameObject {
 			if (key == 'r') {
 				out = "r";
 			}
+			if (key == 's') {
+				out  = "s";
+			}
 			if (out.isEmpty() == false) {
 				out = gson.toJson(new Event("keyboard,"+id, out, 0, 1), EventType); // TODO timestamp this on the server not on the client
 				writer.println(out);

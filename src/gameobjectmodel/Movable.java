@@ -1,6 +1,7 @@
 package gameobjectmodel;
 
 import processing.core.PApplet;
+import section2.Server;
 
 // for objects that move
 
@@ -8,6 +9,7 @@ public class Movable implements Component {
 	
 	public String type; // the object type to use for collisions
 	public float[] shape; // the object shape to use for drawing and updating
+	public long lastTick = -1; // keep track of the last tick to calculate how much to move between frames
 	
 	// have a drawing component
 	transient private Drawing drawing = new Drawing();
@@ -40,5 +42,22 @@ public class Movable implements Component {
 		return this.drawing;
 	}
 	
-
+	public long getTime = 0;
+	public void initializeTick() {
+		getTime = Server.gametime.getTime();
+		if (lastTick == -1) {
+			lastTick = getTime;
+		}
+	}
+	
+	public long diff = 0;
+	public boolean continueUpdate() {
+		getTime = Server.gametime.getTime();
+		if (lastTick != getTime) {
+			diff = getTime - lastTick;
+			lastTick = getTime;
+			return true;
+		}
+		return false;
+	}
 }
