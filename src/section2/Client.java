@@ -155,6 +155,7 @@ public class Client extends PApplet implements GameObject {
 		try {
 			if (reader.ready()) {
 				String i = reader.readLine();
+				System.err.println(i);
 				ServerClientMessage message = gson.fromJson(i,ServerClientMessageType);
 				lastMessage = message;
 				return message;

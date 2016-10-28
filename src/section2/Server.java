@@ -129,7 +129,7 @@ public class Server implements GameObject {
 							characters.set(i, c.update());
 							floatingPlatform.update();
 							physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
-							writeMessageToClient(out);
+							writeMessageToClient(createServerClientMessage(), out);
 						}
 					}
 				}
@@ -141,8 +141,7 @@ public class Server implements GameObject {
 	
 	// write a message to the client
 	// mostly including updated info to draw
-	private void writeMessageToClient(PrintWriter writer) {
-		createServerClientMessage();
+	private void writeMessageToClient(ServerClientMessage serverClientMessage, PrintWriter writer) {
 		writer.println(gson.toJson(message, ServerClientMessageType));
 	}
 
@@ -211,7 +210,8 @@ public class Server implements GameObject {
 			//gametime.pause(); // pause the game
 			System.err.println("not recording");
 			replay.stopRecording();
-			writeMessageToClient(outStream.get(replay.clientid));
+			writeMessageToClient(replay.initialReplayState, outStream.get(replay.clientid));
+			System.err.println("replay state sent to client");
 			// go into replay mode
 		}
 	}
