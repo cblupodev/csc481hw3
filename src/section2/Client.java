@@ -94,33 +94,33 @@ public class Client extends PApplet implements GameObject {
 	FloatingPlatform fp = new FloatingPlatform(windowWidth, windowHeight); // keep reference so not allocating memory each time
 	CharacterClient c; // keep reference so not allocating memory each time
 	public void draw() {
-			// read the character object from the server. the server does the updating
-			ServerClientMessage message;
-			sendInputToServer();
-			message = readMessageFromServer();
-			// render -->
-			background(0); // reset the background each frame
-			drawing.drawFill(new int[] { 221, 221, 221 }); // light gray
-			drawing.drawRect(rectFoundation1);
-			drawing.drawRect(rectFoundation2);
-			drawing.drawFill(new int[] { 50, 50, 50 }); // light gray
-			try {
-				fp.shape = message.floatPlatformShapeMessage;
-				fp.draw(this);
-				for (int i = 0; i < message.cShapes.size(); i++) { // draw the characters
-					if (message.cShapes.size() > characters.size()) { // if a new client connected and thus character added, then add to the list
-						CharacterClient c = new CharacterClient(characters.size() - 1, windowWidth, windowHeight); // new id will always be the size - 1
-						characters.add(c);
-					}
-					// update the characters
-					c = characters.get(i);
-					c.shape = message.cShapes.get(i);
-					c.jumping = message.cJumping.get(i);
-					c.jumpingAngle = message.cjumpingAngle.get(i);
-					c.color = message.cColor.get(i);
-					c.draw(this);
+		// read the character object from the server. the server does the updating
+		ServerClientMessage message;
+		sendInputToServer();
+		message = readMessageFromServer();
+		// render -->
+		background(0); // reset the background each frame
+		drawing.drawFill(new int[] { 221, 221, 221 }); // light gray
+		drawing.drawRect(rectFoundation1);
+		drawing.drawRect(rectFoundation2);
+		drawing.drawFill(new int[] { 50, 50, 50 }); // light gray
+		try {
+			fp.shape = message.floatPlatformShapeMessage;
+			fp.draw(this);
+			for (int i = 0; i < message.cShapes.size(); i++) { // draw the characters
+				if (message.cShapes.size() > characters.size()) { // if a new client connected and thus character added, then add to the list
+					CharacterClient c = new CharacterClient(characters.size() - 1, windowWidth, windowHeight); // new id will always be the size - 1
+					characters.add(c);
 				}
-			} catch (NullPointerException e) { }
+				// update the characters
+				c = characters.get(i);
+				c.shape = message.cShapes.get(i);
+				c.jumping = message.cJumping.get(i);
+				c.jumpingAngle = message.cjumpingAngle.get(i);
+				c.color = message.cColor.get(i);
+				c.draw(this);
+			}
+		} catch (NullPointerException e) { }
 	}
 	
 	// send keyboard input to the server so it can update character

@@ -11,4 +11,17 @@ public class ServerClientMessage {
 	ArrayList<Boolean> cJumping = new ArrayList<>();
 	ArrayList<Float>   cjumpingAngle = new ArrayList<>();
 	ArrayList<int[]>   cColor = new ArrayList<>();
+	
+	public ServerClientMessage(float[] floatPlatformShapeMessage, ArrayList<float[]> cShapes,
+			ArrayList<Boolean> cJumping, ArrayList<Float> cjumpingAngle, ArrayList<int[]> cColor) {
+		this.floatPlatformShapeMessage = floatPlatformShapeMessage;
+		this.cShapes = cShapes;
+		this.cJumping = cJumping;
+		this.cjumpingAngle = cjumpingAngle;
+		this.cColor = cColor;
+	}
+
+	public ServerClientMessage() {
+		// TODO Auto-generated constructor stub
+	}
 }

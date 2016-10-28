@@ -92,7 +92,6 @@ public class CharacterServer extends Movable implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
-		System.err.println("x");
 		if (e.type.equals("keyboard,"+id)) {
 			String s = (String) e.parameters;
 			updateInput(s);

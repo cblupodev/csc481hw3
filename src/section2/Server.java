@@ -32,6 +32,8 @@ public class Server implements GameObject {
 	private EventManager events;
 	private Time realtime;
 	public static Time gametime;
+	private ServerClientMessage initialReplayState;
+	private Replay replay;
 	
 	public static ArrayList<Immovable> immovables = new ArrayList<>(); // list of specific objects to collide with
 	public static ArrayList<Movable> movables = new ArrayList<>(); // not used yet
@@ -51,6 +53,7 @@ public class Server implements GameObject {
 		// add collidable stuff to the physics component
 		events = new EventManager();
 		physics = new Physics(events);
+		replay = new Replay();
 		realtime = new Time(null, 1, 0);
 		// initialize the static objects
 		Immovable rectFoundation1 = new Immovable("rect", new float[] {0, windowHeight*.9f, windowWidth*.75f, windowHeight*.1f});
@@ -77,7 +80,7 @@ public class Server implements GameObject {
 		t.start();
 		
 		gametime = new Time(realtime, 1000000, 0); // this should be on a millisecond timescale
-		events.register("keyboard", this);
+		events.register("*", replay);
 		
 		// read from clients
 		int frame = -1;
@@ -94,10 +97,11 @@ public class Server implements GameObject {
 					
 					c = new CharacterServer(i, windowWidth, windowHeight, events, physics);
 					characters.add(i, c);
-					events.registerMap.put("keyboard,"+i, c);
-					events.registerMap.put("collision,"+i, c);
-					events.registerMap.put("spawn,"+i, c);
-					events.registerMap.put("death,"+i, c);
+					events.register("keyboard,"+i, c);
+					events.register("keyboard,"+i, this);
+					events.register("collision,"+i, c);
+					events.register("spawn,"+i, c);
+					events.register("death,"+i, c);
 					// select random character
 					Random r = new Random();
 					c.color = new int[] {r.nextInt(255), r.nextInt(255), r.nextInt(255)};
@@ -117,14 +121,16 @@ public class Server implements GameObject {
 					characters.set(i, readInputFromClient(i, c, inStream.get(i), out)); // read input from client
 					// UPDATE
 					if (frame % 10000 == 0) { // need the frames or else it will update everything to quickly before you can read input
-						if (events.isEmpty() == false) {
-							events.handle();
+						if (replay.isInReplayMode == false) {
+							if (events.isEmpty() == false) {
+								events.handle();
+							}
+							physics.collision();
+							characters.set(i, c.update());
+							floatingPlatform.update();
+							physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
+							writeMessageToClient(out);
 						}
-						physics.collision();
-						characters.set(i, c.update());
-						floatingPlatform.update();
-						physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
-						writeMessageToClient(out);
 					}
 				}
 			}
@@ -135,19 +141,8 @@ public class Server implements GameObject {
 	
 	// write a message to the client
 	// mostly including updated info to draw
-	ServerClientMessage message = new ServerClientMessage();
 	private void writeMessageToClient(PrintWriter writer) {
-		message.cShapes.clear();
-		message.cJumping.clear();
-		message.cjumpingAngle.clear();
-		message.cColor.clear();
-		message.floatPlatformShapeMessage = floatingPlatform.shape;
-		for (CharacterServer c : characters) {
-			message.cShapes.add(c.shape);
-			message.cJumping.add(c.jumping);
-			message.cjumpingAngle.add(c.jumpingAngle);
-			message.cColor.add(c.color);
-		}
+		createServerClientMessage();
 		writer.println(gson.toJson(message, ServerClientMessageType));
 	}
 
@@ -159,11 +154,12 @@ public class Server implements GameObject {
 				Event e = gson.fromJson(message, EventType);
 				boolean cont = true;
 				String p = (String)e.parameters;
-				if (events.isRecording == true) {
+				if (replay.isRecording == true) {
 					if (p.equals("r")) {
-						 cont = false; // don't do anything if already recording
+						cont = false; // don't do anything if already recording
 					}
-				} if (events.isRecording == false) {
+				} 
+				if (replay.isInReplayMode == true) {
 					if (p.equals("s")) {
 						cont = false;
 						// continue as before, don't add a useless event
@@ -172,7 +168,6 @@ public class Server implements GameObject {
 				if (cont == true) {
 					events.addEvent(e);
 					boolean keypressed = false;
-					//keypressed = c.updateInput(message);
 					if (keypressed) {
 						characters.set(i, c);
 						return c;
@@ -186,14 +181,37 @@ public class Server implements GameObject {
 		return c;
 	}
 
+	ServerClientMessage message = new ServerClientMessage(); // only allocate memory once
+	public ServerClientMessage createServerClientMessage() {
+		message.cShapes.clear();
+		message.cJumping.clear();
+		message.cjumpingAngle.clear();
+		message.cColor.clear();
+		message.floatPlatformShapeMessage = floatingPlatform.shape;
+		for (CharacterServer c : characters) {
+			message.cShapes.add(c.shape);
+			message.cJumping.add(c.jumping);
+			message.cjumpingAngle.add(c.jumpingAngle);
+			message.cColor.add(c.color);
+		}
+		return message;
+	}
+
 	@Override
 	public void onEvent(Event e) {
 		if (((String)e.parameters).equals("r")) {
-			System.out.println("r");
-			events.isRecording = true;
+			replay.initialReplayState = createServerClientMessage();
+			replay.time = new Time(this.gametime, 1, this.gametime.getTime());
+			replay.startRecording();
+			replay.clientid = Integer.parseInt((e.type.split(","))[1]);
+;			createServerClientMessage();
+			replay.initialReplayState = message;
+			System.err.println("is recording");
 		} else if (((String)e.parameters).equals("s")) {
-			System.out.println("s");
-			events.isRecording = false;
+			//gametime.pause(); // pause the game
+			System.err.println("not recording");
+			replay.stopRecording();
+			writeMessageToClient(outStream.get(replay.clientid));
 			// go into replay mode
 		}
 	}

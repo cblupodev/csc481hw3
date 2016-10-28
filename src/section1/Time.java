@@ -7,11 +7,13 @@ public class Time {
 	public long origin;
 	public long tic = 0;
 	private long lastTime = 0;
+	private long originalTicSize = 0;
 
-	public Time(Time anchor, int ticSize, int origin) {
+	public Time(Time anchor, long ticSize, long origin) {
 		this.anchor = anchor;
 		this.ticSize = ticSize;
 		this.origin = origin;
+		this.originalTicSize = ticSize;
 	}
 
 	public long getTime() {
@@ -28,6 +30,14 @@ public class Time {
 	
 	public long getRealTime() {
 		return System.nanoTime();
+	}
+
+	public void pause() {
+		ticSize = Integer.MAX_VALUE;
+	}
+	
+	public void resume() {
+		ticSize = originalTicSize;
 	}
 	
 }

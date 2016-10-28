@@ -1,7 +1,10 @@
+types ↓
 keyboard,<id>
 collision,<id>
 spawn,<id>
 death,<id>
+*
 
+parameters explanation ↓ 
 "r" is record
 "s" is stop recording and automatically go into the replay
