@@ -53,11 +53,11 @@ public class CharacterServer extends Movable implements GameObject {
 		initializeTick();
 		if (continueUpdate() == true) {
 			if (message.equals("LEFT")) {
-				shape[0] -= (float)diff / 40; // move x position left
+				shape[0] -= (float)diff / 20; // move x position left
 				return true;
 			}
 			if (message.equals("RIGHT")) {
-				shape[0] += (float)diff / 40; // move x position right
+				shape[0] += (float)diff / 20; // move x position right
 				return true;
 			}
 			if (message.equals("SPACE")) {

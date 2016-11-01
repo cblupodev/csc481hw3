@@ -11,7 +11,6 @@ import section1.Time;
 public class Replay implements GameObject {
 	
 	public ArrayList<Event> log = new ArrayList<>();
-	public Multimap<String,GameObject> registerMap = ArrayListMultimap.create();
 	public boolean isRecording = false;
 	public ServerClientMessage initialReplayState;
 	public Time time;

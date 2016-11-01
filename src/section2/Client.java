@@ -98,6 +98,9 @@ public class Client extends PApplet implements GameObject {
 		ServerClientMessage message;
 		sendInputToServer();
 		message = readMessageFromServer();
+		if (message != null) {
+			System.err.println(message.toString());
+		}
 		// render -->
 		background(0); // reset the background each frame
 		drawing.drawFill(new int[] { 221, 221, 221 }); // light gray

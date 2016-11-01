@@ -10,6 +10,7 @@ public class Movable implements Component {
 	public String type; // the object type to use for collisions
 	public float[] shape; // the object shape to use for drawing and updating
 	public long lastTick = -1; // keep track of the last tick to calculate how much to move between frames
+	public long lastReplayTick = -1;
 	
 	// have a drawing component
 	transient private Drawing drawing = new Drawing();
@@ -42,21 +43,37 @@ public class Movable implements Component {
 		return this.drawing;
 	}
 	
-	public long getTime = 0;
 	public void initializeTick() {
-		getTime = Server.gametime.getTime();
+		long getTime = Server.gametime.getTime();
 		if (lastTick == -1) {
 			lastTick = getTime;
+		}
+		if (lastReplayTick == -1) {
+			try {
+				lastReplayTick = Server.replay.time.getTime();
+			} catch (NullPointerException e) {
+				// dont do anything if havent started recording yet
+			}
 		}
 	}
 	
 	public long diff = 0;
 	public boolean continueUpdate() {
-		getTime = Server.gametime.getTime();
-		if (lastTick != getTime) {
-			diff = getTime - lastTick;
-			lastTick = getTime;
-			return true;
+		if (Server.replay.isInReplayMode == false) {
+			long getTime = Server.gametime.getTime();
+			if (lastTick != getTime) {
+				diff = getTime - lastTick;
+				lastTick = getTime;
+				return true;
+			}	
+		}
+		if (Server.replay.isInReplayMode == true) {
+			long getReplayTime = Server.replay.time.getTime();
+			if (lastReplayTick != getReplayTime) {
+				diff = getReplayTime - lastReplayTick;
+				lastReplayTick = getReplayTime;
+				return true;
+			}
 		}
 		return false;
 	}

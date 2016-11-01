@@ -1,11 +1,19 @@
 package section2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 // This is used because we haven't implemented an event system yet
 // I'm passing fields because if I send the whole objects it really slows down the message passing
 
 public class ServerClientMessage {
+	@Override
+	public String toString() {
+		return "ServerClientMessage [floatPlatformShapeMessage=" + Arrays.toString(floatPlatformShapeMessage)
+				+ ", cShapes=" + cShapes + ", cJumping=" + cJumping + ", cjumpingAngle=" + cjumpingAngle + ", cColor="
+				+ cColor + "]";
+	}
+
 	float[]            floatPlatformShapeMessage;
 	ArrayList<float[]> cShapes = new ArrayList<>();
 	ArrayList<Boolean> cJumping = new ArrayList<>();

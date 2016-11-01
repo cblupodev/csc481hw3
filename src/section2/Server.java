@@ -32,8 +32,7 @@ public class Server implements GameObject {
 	private EventManager events;
 	private Time realtime;
 	public static Time gametime;
-	private ServerClientMessage initialReplayState;
-	private Replay replay;
+	public static Replay replay;
 	
 	public static ArrayList<Immovable> immovables = new ArrayList<>(); // list of specific objects to collide with
 	public static ArrayList<Movable> movables = new ArrayList<>(); // not used yet
@@ -131,6 +130,23 @@ public class Server implements GameObject {
 							physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
 							writeMessageToClient(createServerClientMessage(), out);
 						}
+						// replay the events
+						else if (replay.isInReplayMode == true) {
+							// TODO make sure the initial replay state was teleported
+							while (replay.log.isEmpty() == false) {
+								Event e = replay.log.remove(replay.log.size() - 1);
+								if (e.age < 1) {
+									ArrayList<GameObject> goList = events.registerMap.get(e.type);
+									for (GameObject go : goList) {
+										go.onEvent(e);
+									}
+									floatingPlatform.update();
+									physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
+									writeMessageToClient(createServerClientMessage(), out);
+									System.err.println("wrote replay message");
+								}
+							}
+						}
 					}
 				}
 			}
@@ -142,7 +158,7 @@ public class Server implements GameObject {
 	// write a message to the client
 	// mostly including updated info to draw
 	private void writeMessageToClient(ServerClientMessage serverClientMessage, PrintWriter writer) {
-		writer.println(gson.toJson(message, ServerClientMessageType));
+		writer.println(gson.toJson(serverClientMessage, ServerClientMessageType));
 	}
 
 	// read keyboard input from client
@@ -199,19 +215,14 @@ public class Server implements GameObject {
 	@Override
 	public void onEvent(Event e) {
 		if (((String)e.parameters).equals("r")) {
-			replay.initialReplayState = createServerClientMessage();
+			replay.initialReplayState  = createServerClientMessage();
 			replay.time = new Time(this.gametime, 1, this.gametime.getTime());
 			replay.startRecording();
 			replay.clientid = Integer.parseInt((e.type.split(","))[1]);
-;			createServerClientMessage();
-			replay.initialReplayState = message;
-			System.err.println("is recording");
 		} else if (((String)e.parameters).equals("s")) {
 			//gametime.pause(); // pause the game
-			System.err.println("not recording");
 			replay.stopRecording();
 			writeMessageToClient(replay.initialReplayState, outStream.get(replay.clientid));
-			System.err.println("replay state sent to client");
 			// go into replay mode
 		}
 	}
