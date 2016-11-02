@@ -33,17 +33,20 @@ public class CharacterServer extends Movable implements GameObject {
 	}
 
 	public CharacterServer update() {
-		// redraw the agent if it's in the process of jumping
-		if (jumping) {
-			// used that colliding circles example from processing.org
-			float newY = windowHeight * .9f - 50 + (200 * physics.sinWrap(physics.radiansWrap(jumpingAngle)));
-			shape[1] = newY;// set a new y position
-			jumpingAngle = jumpingAngle + 3; // increment the jumping angle
-			if (jumpingAngle == 360) { // stop jumping if reached the ground
-				jumping = false;
-				jumpingAngle = 180;
-				shape[1] = originalY;
-			}
+		initializeTick();
+		if (continueUpdate() == true) {
+			// redraw the agent if it's in the process of jumping
+			if (jumping) {
+				// used that colliding circles example from processing.org
+				float newY = windowHeight * .9f - 50 + (200 * physics.sinWrap(physics.radiansWrap(jumpingAngle)));
+				shape[1] = newY;// set a new y position
+				jumpingAngle = jumpingAngle + (float)diff / (movementFactor / 2); // increment the jumping angle
+				if (jumpingAngle >= 360) { // stop jumping if reached the ground
+					jumping = false;
+					jumpingAngle = 180;
+					shape[1] = originalY;
+				}
+			} 
 		}
 		return this;
 	}
@@ -53,11 +56,11 @@ public class CharacterServer extends Movable implements GameObject {
 		initializeTick();
 		if (continueUpdate() == true) {
 			if (message.equals("LEFT")) {
-				shape[0] -= (float)diff / 20; // move x position left
+				shape[0] -= (float)diff / movementFactor; // move x position left
 				return true;
 			}
 			if (message.equals("RIGHT")) {
-				shape[0] += (float)diff / 20; // move x position right
+				shape[0] += (float)diff / movementFactor; // move x position right
 				return true;
 			}
 			if (message.equals("SPACE")) {
@@ -95,6 +98,7 @@ public class CharacterServer extends Movable implements GameObject {
 		if (e.type.equals("keyboard,"+id)) {
 			String s = (String) e.parameters;
 			updateInput(s);
+			update();
 		} else if (e.type.equals("collision,"+id)) {
 			events.addEvent(new Event("death,"+id, null, 1, 0));
 		} else if (e.type.equals("death,"+id)) {

@@ -7,6 +7,7 @@ public class Time {
 	public long origin;
 	public long tic = 0;
 	private long lastTime = 0;
+	private long lastTic = 0;
 	private long originalTicSize = 0;
 
 	public Time(Time anchor, long ticSize, long origin) {
@@ -38,6 +39,14 @@ public class Time {
 	
 	public void resume() {
 		ticSize = originalTicSize;
+	}
+	
+	public boolean advanced() {
+		lastTic = tic;
+		if (lastTic < getTime()) {
+			return true;
+		}
+		return false;
 	}
 	
 }

@@ -78,7 +78,7 @@ public class Server implements GameObject {
 		Thread t = new Thread(new ServerAccept());
 		t.start();
 		
-		gametime = new Time(realtime, 1000000, 0); // this should be on a millisecond timescale
+		gametime = new Time(realtime, 1000000, 0); // this should be on a millisecond timescale, 1000000
 		events.register("*", replay);
 		
 		// read from clients
@@ -119,7 +119,8 @@ public class Server implements GameObject {
 					c = characters.get(i);
 					characters.set(i, readInputFromClient(i, c, inStream.get(i), out)); // read input from client
 					// UPDATE
-					if (frame % 10000 == 0) { // need the frames or else it will update everything to quickly before you can read input
+					if (gametime.advanced() == true) {
+					//if (frame % 10000 == 0) { // need the frames or else it will update everything to quickly before you can read input
 						if (replay.isInReplayMode == false) {
 							if (events.isEmpty() == false) {
 								events.handle();
@@ -134,17 +135,26 @@ public class Server implements GameObject {
 						else if (replay.isInReplayMode == true) {
 							// TODO make sure the initial replay state was teleported
 							while (replay.log.isEmpty() == false) {
-								Event e = replay.log.remove(replay.log.size() - 1);
-								if (e.age < 1) {
-									ArrayList<GameObject> goList = events.registerMap.get(e.type);
-									for (GameObject go : goList) {
-										go.onEvent(e);
+								Event e = replay.log.get(0);
+								
+								// only replay events that are ready, 
+								// if you don't do this check events will get handled in to small intervals between each other
+
+								System.err.printf("%d\n", replay.time.getTime() - e.timestamp);
+								if (e.timestamp <= replay.time.getTime()) {
+									if (e.age < 1) {
+										e = replay.log.remove(0);
+										//System.err.printf("%d\n", replay.time.getTime() - e.timestamp);
+										ArrayList<GameObject> goList = events.registerMap.get(e.type);
+										for (GameObject go : goList) {
+											go.onEvent(e);
+										}
+										floatingPlatform.update();
+										//System.err.println("wrote replay message");
 									}
-									floatingPlatform.update();
-									physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
-									writeMessageToClient(createServerClientMessage(), out);
-									System.err.println("wrote replay message");
 								}
+								physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
+								writeMessageToClient(createServerClientMessage(), out);
 							}
 						}
 					}
@@ -216,7 +226,6 @@ public class Server implements GameObject {
 	public void onEvent(Event e) {
 		if (((String)e.parameters).equals("r")) {
 			replay.initialReplayState  = createServerClientMessage();
-			replay.time = new Time(this.gametime, 1, this.gametime.getTime());
 			replay.startRecording();
 			replay.clientid = Integer.parseInt((e.type.split(","))[1]);
 		} else if (((String)e.parameters).equals("s")) {

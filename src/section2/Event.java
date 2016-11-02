@@ -17,15 +17,11 @@ public class Event implements Comparable<Object> {
 	public int compareTo(Object arg0) {
 		Event e = (Event) arg0;
 		int rtn = 0;
-		// compare based on priorities first
-		if (this.priority == e.priority) {
+		// compare based on timestamp first
+		if (this.timestamp == e.timestamp) {
 			rtn = 0;
-		} else if (this.priority < e.priority) {
-			if (this.timestamp < e.timestamp) {
-				rtn = -1;
-			} else {
-				rtn = 1;
-			}
+		} else if (this.timestamp < e.timestamp) {
+			rtn = -1;
 		} else {
 			rtn = 1;
 		}

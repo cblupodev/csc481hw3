@@ -11,6 +11,7 @@ public class Movable implements Component {
 	public float[] shape; // the object shape to use for drawing and updating
 	public long lastTick = -1; // keep track of the last tick to calculate how much to move between frames
 	public long lastReplayTick = -1;
+	protected final float movementFactor = 5; // controls the magnitude of movement
 	
 	// have a drawing component
 	transient private Drawing drawing = new Drawing();
@@ -48,12 +49,8 @@ public class Movable implements Component {
 		if (lastTick == -1) {
 			lastTick = getTime;
 		}
-		if (lastReplayTick == -1) {
-			try {
-				lastReplayTick = Server.replay.time.getTime();
-			} catch (NullPointerException e) {
-				// dont do anything if havent started recording yet
-			}
+		if (lastReplayTick == -1 && Server.replay.time != null) {
+			lastReplayTick = Server.replay.time.getTime();
 		}
 	}
 	

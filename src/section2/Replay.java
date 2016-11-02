@@ -25,12 +25,17 @@ public class Replay implements GameObject {
 	}
 	
 	public void startRecording() {
+		System.err.println("is recording");
 		isRecording = true;
 		isInReplayMode = false;
 	}
 	
 	// stop recording and go into replay mode
 	public void stopRecording() {
+		System.err.println("stopped recording");
+		if (time == null) { // only do this once
+			time = new Time(Server.gametime, 1, log.get(0).timestamp);
+		}
 		isRecording = false;
 		isInReplayMode = true;
 	}

@@ -99,7 +99,7 @@ public class Client extends PApplet implements GameObject {
 		sendInputToServer();
 		message = readMessageFromServer();
 		if (message != null) {
-			System.err.println(message.toString());
+			//System.err.println(message.toString());
 		}
 		// render -->
 		background(0); // reset the background each frame
@@ -158,7 +158,6 @@ public class Client extends PApplet implements GameObject {
 		try {
 			if (reader.ready()) {
 				String i = reader.readLine();
-				System.err.println(i);
 				ServerClientMessage message = gson.fromJson(i,ServerClientMessageType);
 				lastMessage = message;
 				return message;
