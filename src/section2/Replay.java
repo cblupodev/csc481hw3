@@ -16,6 +16,7 @@ public class Replay implements GameObject {
 	public Time time;
 	public int clientid;
 	public boolean isInReplayMode = false;
+	private long timeWhenHitRecord = 0;
 
 	@Override
 	public void onEvent(Event e) {
@@ -25,19 +26,24 @@ public class Replay implements GameObject {
 	}
 	
 	public void startRecording() {
-		System.err.println("is recording");
 		isRecording = true;
 		isInReplayMode = false;
+		timeWhenHitRecord = Server.gametime.getTime();
 	}
 	
 	// stop recording and go into replay mode
 	public void stopRecording() {
-		System.err.println("stopped recording");
-		if (time == null) { // only do this once
-			time = new Time(Server.gametime, 1, log.get(0).timestamp);
-		}
 		isRecording = false;
 		isInReplayMode = true;
+		if (time == null) { // only do this once
+			long firstEventTimestamp = log.get(0).timestamp;
+			long diffBetweenHitRecordAndFirstEvent = firstEventTimestamp - timeWhenHitRecord;
+			time = new Time(Server.gametime, 1f, log.get(0).timestamp - diffBetweenHitRecordAndFirstEvent);
+		}
+	}
+	
+	public void endReplay() {
+		isInReplayMode = false;
 	}
 
 }

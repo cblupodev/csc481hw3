@@ -82,11 +82,10 @@ public class Server implements GameObject {
 		events.register("*", replay);
 		
 		// read from clients
-		int frame = -1;
 		PrintWriter out = null;
 		CharacterServer c;
+		int y = 0;
 		while (true) { // never stop looking
-			frame++;
 			for (int i = 0; i < inStream.size(); i++) { // iterate over the client streams
 				while(outStream.size() != inStream.size()); // busy wait until they are the same size
 				out = outStream.get(i);
@@ -120,7 +119,6 @@ public class Server implements GameObject {
 					characters.set(i, readInputFromClient(i, c, inStream.get(i), out)); // read input from client
 					// UPDATE
 					if (gametime.advanced() == true) {
-					//if (frame % 10000 == 0) { // need the frames or else it will update everything to quickly before you can read input
 						if (replay.isInReplayMode == false) {
 							if (events.isEmpty() == false) {
 								events.handle();
@@ -134,28 +132,29 @@ public class Server implements GameObject {
 						// replay the events
 						else if (replay.isInReplayMode == true) {
 							// TODO make sure the initial replay state was teleported
+							
 							while (replay.log.isEmpty() == false) {
-								Event e = replay.log.get(0);
+								long replayTime = replay.time.getTime();
 								
 								// only replay events that are ready, 
 								// if you don't do this check events will get handled in to small intervals between each other
-
-								System.err.printf("%d\n", replay.time.getTime() - e.timestamp);
-								if (e.timestamp <= replay.time.getTime()) {
+								Event e = replay.log.get(0);
+								while (e.timestamp <= replayTime && replay.log.isEmpty() == false) {
 									if (e.age < 1) {
-										e = replay.log.remove(0);
-										//System.err.printf("%d\n", replay.time.getTime() - e.timestamp);
-										ArrayList<GameObject> goList = events.registerMap.get(e.type);
-										for (GameObject go : goList) {
-											go.onEvent(e);
+										if (replay.log.isEmpty() == false) {
+											e = replay.log.remove(0);
+											ArrayList<GameObject> goList = events.registerMap.get(e.type);
+											for (GameObject go : goList) {
+												go.onEvent(e);
+											}
+											floatingPlatform.update();
+											physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
+											writeMessageToClient(createServerClientMessage(), out);
 										}
-										floatingPlatform.update();
-										//System.err.println("wrote replay message");
 									}
 								}
-								physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
-								writeMessageToClient(createServerClientMessage(), out);
 							}
+							replay.endReplay();
 						}
 					}
 				}

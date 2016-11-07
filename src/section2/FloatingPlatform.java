@@ -22,7 +22,7 @@ public class FloatingPlatform extends Movable implements GameObject {
 		
 		// do nothing if the ticks are the same
 		if (continueUpdate() == true) {
-			shape[0] -= (float) diff / movementFactor; // the division just makes it arbitrarialy run a little slower
+			shape[0] -= (float) diff / (movementFactor * 2); // the division just makes it arbitrarialy run a little slower
 			if (shape[0] + width < 0) { // wrap around to the others side
 				shape[0] = windowWidth;
 			}

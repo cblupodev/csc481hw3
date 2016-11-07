@@ -2,6 +2,12 @@ package section2;
 
 public class Event implements Comparable<Object> {
 
+	@Override
+	public String toString() {
+		return "Event [type=" + type + ", parameters=" + parameters + ", timestamp=" + timestamp + ", age=" + age
+				+ ", priority=" + priority + "]";
+	}
+
 	public String type;
 	public Object parameters;
 	public long timestamp;

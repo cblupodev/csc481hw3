@@ -54,13 +54,16 @@ public class CharacterServer extends Movable implements GameObject {
 	// send keyboard inputs to server
 	private boolean updateInput(String message) {
 		initializeTick();
+		long diffTotal = 0;
 		if (continueUpdate() == true) {
 			if (message.equals("LEFT")) {
 				shape[0] -= (float)diff / movementFactor; // move x position left
+				diffTotal += diff;
 				return true;
 			}
 			if (message.equals("RIGHT")) {
 				shape[0] += (float)diff / movementFactor; // move x position right
+				diffTotal += diff;
 				return true;
 			}
 			if (message.equals("SPACE")) {

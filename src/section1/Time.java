@@ -3,14 +3,14 @@ package section1;
 public class Time {
 	
 	public Time anchor;
-	public long ticSize;
+	public float ticSize;
 	public long origin;
 	public long tic = 0;
 	private long lastTime = 0;
 	private long lastTic = 0;
-	private long originalTicSize = 0;
+	private float originalTicSize = 0;
 
-	public Time(Time anchor, long ticSize, long origin) {
+	public Time(Time anchor, float ticSize, long origin) {
 		this.anchor = anchor;
 		this.ticSize = ticSize;
 		this.origin = origin;
@@ -41,9 +41,11 @@ public class Time {
 		ticSize = originalTicSize;
 	}
 	
+	// did the tic advance the last time you checked?
 	public boolean advanced() {
 		lastTic = tic;
-		if (lastTic < getTime()) {
+		tic = getTime();
+		if (lastTic < tic) {
 			return true;
 		}
 		return false;
