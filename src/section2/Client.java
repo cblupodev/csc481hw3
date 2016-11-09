@@ -143,7 +143,7 @@ public class Client extends PApplet implements GameObject {
 				out  = "s";
 			}
 			if (out.isEmpty() == false) {
-				out = gson.toJson(new Event("keyboard,"+id, out, 0, 1), EventType); // TODO timestamp this on the server not on the client
+				out = gson.toJson(new Event("keyboard,"+id, out, 0, 1), EventType);
 				writer.println(out);
 			}
 		}
@@ -168,7 +168,6 @@ public class Client extends PApplet implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
-		// TODO Auto-generated method stub
 		
 	}
 	

@@ -25,7 +25,11 @@ public class Event implements Comparable<Object> {
 		int rtn = 0;
 		// compare based on timestamp first
 		if (this.timestamp == e.timestamp) {
-			rtn = 0;
+			if (this.priority < e.priority) {
+				rtn = -1;
+			} else {
+				rtn = 0;
+			}
 		} else if (this.timestamp < e.timestamp) {
 			rtn = -1;
 		} else {

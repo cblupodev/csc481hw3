@@ -22,9 +22,7 @@ public class Time {
 			return System.nanoTime();
 		}
 		long currentTime = anchor.getTime();
-		//if (currentTime - lastTime >= ticSize) {
-			tic += Math.floor((currentTime - lastTime) / ticSize); // if return zero then no harm done
-		//}
+		tic += Math.floor((currentTime - lastTime) / ticSize); // if return zero then no harm done
 		lastTime = currentTime;
 		return tic;
 	}

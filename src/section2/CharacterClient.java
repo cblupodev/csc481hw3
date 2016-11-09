@@ -5,6 +5,7 @@ import gameobjectmodel.Movable;
 import gameobjectmodel.Physics;
 import processing.core.PApplet;
 
+// The client version of Character
 public class CharacterClient extends Movable implements GameObject {
 	public float originalX; // original x position
 	public float originalY; // original y position
@@ -14,7 +15,6 @@ public class CharacterClient extends Movable implements GameObject {
 	private int windowHeight; // sketch height
 	public int id;
 
-	// TODO put this in the constructor
 	private Physics physics = new Physics(); // keep reference to physics so it can update the character
 
 	public CharacterClient(int id, int windowWidth, int windowHeight) {

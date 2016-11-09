@@ -30,6 +30,5 @@ public class ServerClientMessage {
 	}
 
 	public ServerClientMessage() {
-		// TODO Auto-generated constructor stub
 	}
 }

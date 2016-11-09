@@ -48,7 +48,6 @@ public class FloatingPlatform extends Movable implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
-		// TODO Auto-generated method stub
 		
 	}
 

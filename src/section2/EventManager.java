@@ -11,8 +11,9 @@ import gameobjectmodel.GameObject;
 
 public class EventManager {
 	
+	// store handlers that are registered
 	public ConcurrentHashMap<String, ArrayList<GameObject>> registerMap = new ConcurrentHashMap<>();
-	//public Multimap<String,GameObject> registerMap = ArrayListMultimap.create();
+	// priority queue to store unhandled events
 	private Queue<Event> eventPriorityQueue = new PriorityBlockingQueue<Event>();
 
 	public void register(String type, GameObject handler) {
@@ -22,7 +23,6 @@ public class EventManager {
 			handlers = registerMap.get(type);
 		}
 		handlers.add(handler);
-		//registerMap.put(type, handler);
 	}
 	
 	public void raise(Event e) {
