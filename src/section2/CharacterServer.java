@@ -8,6 +8,7 @@ import gameobjectmodel.Physics;
 import processing.core.PApplet;
 import section1.Time;
 
+// The server version of character
 public class CharacterServer extends Movable implements GameObject {
 
 	public float originalX; // original x position
@@ -16,7 +17,7 @@ public class CharacterServer extends Movable implements GameObject {
 	public boolean jumping = false; // is it jumping?
 	public float jumpingAngle = 180f; // the jumping angle
 	private int windowHeight; // sketch height
-	public int id;
+	public int id; // identifier used for event management
 
 	private Physics physics = new Physics(); // keep reference to physics so it can update the character
 	public EventManager events;
