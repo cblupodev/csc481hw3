@@ -1,4 +1,4 @@
-package section2;
+package scripting;
 
 import java.util.Arrays;
 
@@ -6,7 +6,6 @@ import gameobjectmodel.GameObject;
 import gameobjectmodel.Movable;
 import gameobjectmodel.Physics;
 import processing.core.PApplet;
-import section1.Time;
 
 // The server version of character
 public class CharacterServer extends Movable implements GameObject {

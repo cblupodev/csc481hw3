@@ -1,6 +1,4 @@
-package section2;
-
-import section1.Time;
+package scripting;
 
 // The initialization message the server sends to the client
 

@@ -1,4 +1,4 @@
-package section2;
+package scripting;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +15,6 @@ import com.google.gson.reflect.TypeToken;
 import gameobjectmodel.Drawing;
 import gameobjectmodel.GameObject;
 import processing.core.PApplet;
-import section1.Time;
 
 public class Client extends PApplet implements GameObject {
 	

@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import com.google.gson.reflect.TypeToken;
 
 import processing.core.PApplet;
-import section1.Time;
-import section2.Event;
-import section2.EventManager;
-import section2.FloatingPlatform;
-import section2.Server;
+import scripting.Event;
+import scripting.EventManager;
+import scripting.FloatingPlatform;
+import scripting.Server;
+import scripting.Time;
 
 public class Physics extends PApplet implements Component {
 	
@@ -38,7 +38,7 @@ public class Physics extends PApplet implements Component {
 		ArrayList<Event> eventList = new ArrayList<>();
 		try {
 			for (int j = 0; j < Server.characters.size(); j++) {
-				section2.CharacterServer c = Server.characters.get(j);
+				scripting.CharacterServer c = Server.characters.get(j);
 				// check immovables
 				for (int i = 0; i < Server.immovables.size(); i++) {
 					if (c.type.equals("rect")) { // if its a rectangle

@@ -1,7 +1,7 @@
 package gameobjectmodel;
 
 import processing.core.PApplet;
-import section2.Server;
+import scripting.Server;
 
 // for objects that move
 
@@ -49,29 +49,16 @@ public class Movable implements Component {
 		if (lastTick == -1) {
 			lastTick = getTime;
 		}
-		if (lastReplayTick == -1 && Server.replay.time != null) {
-			lastReplayTick = Server.replay.time.getTime();
-		}
 	}
 	
 	public long diff = 0;
 	public boolean continueUpdate() {
-		if (Server.replay.isInReplayMode == false) {
-			long getTime = Server.gametime.getTime();
-			if (lastTick != getTime) {
-				diff = getTime - lastTick;
-				lastTick = getTime;
-				return true;
-			}	
-		}
-		if (Server.replay.isInReplayMode == true) {
-			long getReplayTime = Server.replay.time.getTime();
-			if (lastReplayTick != getReplayTime) { // if the time didn't advance
-				diff = getReplayTime - lastReplayTick;
-				lastReplayTick = getReplayTime;
-				return true;
-			}
-		}
+		long getTime = Server.gametime.getTime();
+		if (lastTick != getTime) {
+			diff = getTime - lastTick;
+			lastTick = getTime;
+			return true;
+		}	
 		return false;
 	}
 }

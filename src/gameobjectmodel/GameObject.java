@@ -1,8 +1,6 @@
 package gameobjectmodel;
 
-// just a marker interface to tag something as a game object
-
-import section2.Event;
+import scripting.Event;
 
 public interface GameObject {
 	

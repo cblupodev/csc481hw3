@@ -1,4 +1,4 @@
-package section2;
+package scripting;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +16,6 @@ import gameobjectmodel.Immovable;
 import gameobjectmodel.Movable;
 import gameobjectmodel.Physics;
 import processing.core.PApplet;
-import section1.Time;
 
 public class Server implements GameObject {
 	
@@ -32,7 +31,6 @@ public class Server implements GameObject {
 	private EventManager events;
 	private Time realtime;
 	public static Time gametime;
-	public static Replay replay;
 	
 	public static ArrayList<Immovable> immovables = new ArrayList<>(); // list of specific objects to collide with
 	public static ArrayList<Movable> movables = new ArrayList<>(); // not used yet
@@ -52,7 +50,6 @@ public class Server implements GameObject {
 		// add collidable stuff to the physics component
 		events = new EventManager();
 		physics = new Physics(events);
-		replay = new Replay();
 		realtime = new Time(null, 1, 0);
 		// initialize the static objects
 		Immovable rectFoundation1 = new Immovable("rect", new float[] {0, windowHeight*.9f, windowWidth*.75f, windowHeight*.1f});
@@ -79,7 +76,6 @@ public class Server implements GameObject {
 		t.start();
 		
 		gametime = new Time(realtime, 1000000, 0); // this should be on a millisecond timescale, 1000000
-		events.register("*", replay);
 		
 		// read from clients
 		PrintWriter out = null;
@@ -119,43 +115,14 @@ public class Server implements GameObject {
 					characters.set(i, readInputFromClient(i, c, inStream.get(i), out)); // read input from client
 					// UPDATE
 					if (gametime.advanced() == true) {
-						if (replay.isInReplayMode == false) {
-							if (events.isEmpty() == false) {
-								events.handle();
-							}
-							physics.collision();
-							characters.set(i, c.update());
-							floatingPlatform.update();
-							physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
-							writeMessageToClient(createServerClientMessage(), out);
+						if (events.isEmpty() == false) {
+							events.handle();
 						}
-						// replay the events
-						else if (replay.isInReplayMode == true) {
-							// TODO make sure the initial replay state was teleported
-							
-							while (replay.log.isEmpty() == false) {
-								long replayTime = replay.time.getTime();
-								
-								// only replay events that are ready, 
-								// if you don't do this check events will get handled in to small intervals between each other
-								Event e = replay.log.get(0);
-								while (e.timestamp <= replayTime && replay.log.isEmpty() == false) {
-									if (e.age < 1) {
-										if (replay.log.isEmpty() == false) {
-											e = replay.log.remove(0);
-											ArrayList<GameObject> goList = events.registerMap.get(e.type);
-											for (GameObject go : goList) {
-												go.onEvent(e);
-											}
-											floatingPlatform.update();
-											physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
-											writeMessageToClient(createServerClientMessage(), out);
-										}
-									}
-								}
-							}
-							replay.endReplay();
-						}
+						physics.collision();
+						characters.set(i, c.update());
+						floatingPlatform.update();
+						physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
+						writeMessageToClient(createServerClientMessage(), out);
 					}
 				}
 			}
@@ -178,17 +145,6 @@ public class Server implements GameObject {
 				Event e = gson.fromJson(message, EventType);
 				boolean cont = true;
 				String p = (String)e.parameters;
-				if (replay.isRecording == true) {
-					if (p.equals("r")) {
-						cont = false; // don't do anything if already recording
-					}
-				} 
-				if (replay.isInReplayMode == true) {
-					if (p.equals("s")) {
-						cont = false;
-						// continue as before, don't add a useless event
-					}
-				}
 				if (cont == true) {
 					events.addEvent(e);
 					boolean keypressed = false;
@@ -223,15 +179,15 @@ public class Server implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
-		if (((String)e.parameters).equals("r")) {
-			replay.initialReplayState  = createServerClientMessage();
-			replay.startRecording();
-			replay.clientid = Integer.parseInt((e.type.split(","))[1]);
-		} else if (((String)e.parameters).equals("s")) {
-			//gametime.pause(); // pause the game
-			replay.stopRecording();
-			writeMessageToClient(replay.initialReplayState, outStream.get(replay.clientid));
-			// go into replay mode
-		}
+//		if (((String)e.parameters).equals("r")) {
+//			replay.initialReplayState  = createServerClientMessage();
+//			replay.startRecording();
+//			replay.clientid = Integer.parseInt((e.type.split(","))[1]);
+//		} else if (((String)e.parameters).equals("s")) {
+//			//gametime.pause(); // pause the game
+//			replay.stopRecording();
+//			writeMessageToClient(replay.initialReplayState, outStream.get(replay.clientid));
+//			// go into replay mode
+//		}
 	}
 }

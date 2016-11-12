@@ -1,4 +1,4 @@
-package section1;
+package scripting;
 
 public class Time {
 	

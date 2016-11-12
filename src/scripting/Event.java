@@ -1,4 +1,4 @@
-package section2;
+package scripting;
 
 public class Event implements Comparable<Object> {
 

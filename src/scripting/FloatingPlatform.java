@@ -1,9 +1,8 @@
-package section2;
+package scripting;
 
 import gameobjectmodel.GameObject;
 import gameobjectmodel.Movable;
 import processing.core.PApplet;
-import section1.Time;
 
 public class FloatingPlatform extends Movable implements GameObject {
 	
@@ -28,16 +27,6 @@ public class FloatingPlatform extends Movable implements GameObject {
 			}
 			return this;
 		}
-		
-//		if (lastTick != getTime) {
-//			long diff = getTime - lastTick;
-//			lastTick = getTime;
-//			shape[0] -= (float) diff / 20; // the division just makes it arbitrarialy run a little slower
-//			if (shape[0] + width < 0) { // wrap around to the others side
-//				shape[0] = windowWidth;
-//			}
-//			return this;
-//		}
 		return null;
 	}
 	

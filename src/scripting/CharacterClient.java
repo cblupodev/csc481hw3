@@ -1,4 +1,4 @@
-package section2;
+package scripting;
 
 import gameobjectmodel.GameObject;
 import gameobjectmodel.Movable;

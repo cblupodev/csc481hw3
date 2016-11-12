@@ -1,4 +1,4 @@
-package section2;
+package scripting;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
