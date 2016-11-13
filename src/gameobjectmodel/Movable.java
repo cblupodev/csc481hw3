@@ -1,6 +1,7 @@
 package gameobjectmodel;
 
 import processing.core.PApplet;
+import scripting.ScriptManager;
 import scripting.Server;
 
 // for objects that move
@@ -10,11 +11,12 @@ public class Movable implements Component {
 	public String type; // the object type to use for collisions
 	public float[] shape; // the object shape to use for drawing and updating
 	public long lastTick = -1; // keep track of the last tick to calculate how much to move between frames
-	public long lastReplayTick = -1;
-	protected final float movementFactor = 2; // controls the magnitude of movement, the lower the number the more magnitude
+	public float movementFactor = 2; // controls the magnitude of movement, the lower the number the more magnitude
 	
 	// have a drawing component
 	transient private Drawing drawing = new Drawing();
+	
+	protected transient ScriptManager scripts = new ScriptManager();
 	
 	// update object position and stuff
 	// this should be overwritten

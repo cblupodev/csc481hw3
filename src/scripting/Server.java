@@ -26,7 +26,7 @@ public class Server implements GameObject {
 	public static CopyOnWriteArrayList<CharacterServer> characters = new CopyOnWriteArrayList<>(); // list of characters
 	public static CopyOnWriteArrayList<BufferedReader> inStream = new CopyOnWriteArrayList<>(); // list of socket input streams
 	public static CopyOnWriteArrayList<PrintWriter> outStream = new CopyOnWriteArrayList<>(); // list of socket output streams
-	public FloatingPlatform floatingPlatform = new FloatingPlatform(windowWidth, windowHeight);
+	public FloatingPlatform floatingPlatform = new FloatingPlatform(windowWidth, windowHeight, "C:/Users/Christopher Lupo/workspace/csc481hw4/src/scripting/fp.js");
 	private Physics physics;
 	private EventManager events;
 	private Time realtime;

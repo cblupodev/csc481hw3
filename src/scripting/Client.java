@@ -41,7 +41,7 @@ public class Client extends PApplet implements GameObject {
 	public static void main(String[] args) {
 		Client c = new Client();
 		c.address = args[0];
-		PApplet.main("section2.Client");
+		PApplet.main("scripting.Client");
 	}
 
 	
@@ -90,7 +90,7 @@ public class Client extends PApplet implements GameObject {
 		}
 	}
 
-	FloatingPlatform fp = new FloatingPlatform(windowWidth, windowHeight); // keep reference so not allocating memory each time
+	FloatingPlatform fp = new FloatingPlatform(windowWidth, windowHeight, null); // keep reference so not allocating memory each time
 	CharacterClient c; // keep reference so not allocating memory each time
 	public void draw() {
 		// read the character object from the server. the server does the updating
