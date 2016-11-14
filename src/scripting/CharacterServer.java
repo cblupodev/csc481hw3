@@ -60,15 +60,15 @@ public class CharacterServer extends Movable implements GameObject {
 	}
 
 	// send keyboard inputs to server
-	private boolean updateInput(String message) {
+	public boolean updateInput(String message) {
 		initializeTick();
 		long diffTotal = 0;
 		if (continueUpdate() == true) {
-			if (scriptFileName != null) {
-				System.err.println(9);
-				scripts.executeScript(message);
-			}
-			else {
+//			if (scriptFileName != null) {
+//				System.err.println(9);
+//				scripts.executeScript(message);
+//			}
+//			else {
 				if (message.equals("LEFT")) {
 					shape[0] -= (float)diff / movementFactor; // move x position left
 					diffTotal += diff;
@@ -85,8 +85,8 @@ public class CharacterServer extends Movable implements GameObject {
 					}
 					return true;
 				}
-			}
-			return true;
+//			}
+//			return true;
 		}
 		return false;
 	}
@@ -110,21 +110,31 @@ public class CharacterServer extends Movable implements GameObject {
 		shape[0] = originalX;
 		shape[1] = originalY;
 	}
+	
+	public void createNewEvent(String type, int age, int priority) {
+		events.addEvent(new Event(type, null, age, priority));
+	}
 
 	@Override
 	public void onEvent(Event e) {
-		if (e.type.equals("keyboard,"+id)) {
-			String s = (String) e.parameters;
-			updateInput(s);
-			update();
-		} else if (e.type.equals("collision,"+id)) {
-			events.addEvent(new Event("death,"+id, null, 1, 0));
-		} else if (e.type.equals("death,"+id)) {
-			events.addEvent(new Event("spawn,"+id, null, 2, 0));
-		} else if (e.type.equals("spawn,"+id)) {
-			setToSpawnPoint();
-		} else {
-			System.out.println("didnt find an event type");
+		if (scriptFileName != null) {
+			scripts.bindArgument("e", e);
+			scripts.executeScript();
+		}
+		else {
+			if (e.type.equals("keyboard,"+id)) {
+				String s = (String) e.parameters;
+				updateInput(s);
+				update();
+			} else if (e.type.equals("collision,"+id)) {
+				events.addEvent(new Event("death,"+id, null, 1, 0));
+			} else if (e.type.equals("death,"+id)) {
+				events.addEvent(new Event("spawn,"+id, null, 2, 0));
+			} else if (e.type.equals("spawn,"+id)) {
+				setToSpawnPoint();
+			} else {
+				System.out.println("didnt find an event type");
+			}
 		}
 	}
 }

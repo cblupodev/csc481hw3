@@ -89,7 +89,7 @@ public class Server implements GameObject {
 				// initialize the agent if the number of streams and agents aren't the same size
 				if (characters.size() != inStream.size()) { // add a character
 					
-					c = new CharacterServer(i, windowWidth, windowHeight, events, physics, "C:/Users/Christopher Lupo/workspace/csc481hw4/src/scripting/cs.js");
+					c = new CharacterServer(i, windowWidth, windowHeight, events, physics, "C:/Users/Christopher Lupo/workspace/csc481hw4/src/scripting/cs2.js");
 					characters.add(i, c);
 					events.register("keyboard,"+i, c);
 					events.register("keyboard,"+i, this);
@@ -179,15 +179,5 @@ public class Server implements GameObject {
 
 	@Override
 	public void onEvent(Event e) {
-//		if (((String)e.parameters).equals("r")) {
-//			replay.initialReplayState  = createServerClientMessage();
-//			replay.startRecording();
-//			replay.clientid = Integer.parseInt((e.type.split(","))[1]);
-//		} else if (((String)e.parameters).equals("s")) {
-//			//gametime.pause(); // pause the game
-//			replay.stopRecording();
-//			writeMessageToClient(replay.initialReplayState, outStream.get(replay.clientid));
-//			// go into replay mode
-//		}
 	}
 }
