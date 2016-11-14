@@ -21,7 +21,7 @@ public class CharacterServer extends Movable implements GameObject {
 	private Physics physics = new Physics(); // keep reference to physics so it can update the character
 	public EventManager events;
 
-	public CharacterServer(int id, int windowWidth, int windowHeight, EventManager events, Physics physics2) {
+	public CharacterServer(int id, int windowWidth, int windowHeight, EventManager events, Physics physics2, String scriptFileName) {
 		this.id = id;
 		this.type = "rect";
 		this.shape = new float[] { windowWidth * .1f, windowHeight * .9f - 50, 25, 50 };
@@ -30,6 +30,14 @@ public class CharacterServer extends Movable implements GameObject {
 		this.windowHeight = windowHeight;
 		this.events = events;
 		this.physics = physics2;
+		try {
+			if(scriptFileName != null) { 
+			    this.scriptFileName = scriptFileName;
+				scripts.loadScript(scriptFileName);
+				scripts.bindArgument("game_object", this);
+			}
+		} catch (Exception e) {
+		}
 	}
 
 	public CharacterServer update() {
@@ -56,22 +64,29 @@ public class CharacterServer extends Movable implements GameObject {
 		initializeTick();
 		long diffTotal = 0;
 		if (continueUpdate() == true) {
-			if (message.equals("LEFT")) {
-				shape[0] -= (float)diff / movementFactor; // move x position left
-				diffTotal += diff;
-				return true;
+			if (scriptFileName != null) {
+				System.err.println(9);
+				scripts.executeScript(message);
 			}
-			if (message.equals("RIGHT")) {
-				shape[0] += (float)diff / movementFactor; // move x position right
-				diffTotal += diff;
-				return true;
-			}
-			if (message.equals("SPACE")) {
-				if (jumping == false) {
-					jumping = true;
+			else {
+				if (message.equals("LEFT")) {
+					shape[0] -= (float)diff / movementFactor; // move x position left
+					diffTotal += diff;
+					return true;
 				}
-				return true;
+				if (message.equals("RIGHT")) {
+					shape[0] += (float)diff / movementFactor; // move x position right
+					diffTotal += diff;
+					return true;
+				}
+				if (message.equals("SPACE")) {
+					if (jumping == false) {
+						jumping = true;
+					}
+					return true;
+				}
 			}
+			return true;
 		}
 		return false;
 	}

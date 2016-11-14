@@ -89,7 +89,7 @@ public class Server implements GameObject {
 				// initialize the agent if the number of streams and agents aren't the same size
 				if (characters.size() != inStream.size()) { // add a character
 					
-					c = new CharacterServer(i, windowWidth, windowHeight, events, physics);
+					c = new CharacterServer(i, windowWidth, windowHeight, events, physics, "C:/Users/Christopher Lupo/workspace/csc481hw4/src/scripting/cs.js");
 					characters.add(i, c);
 					events.register("keyboard,"+i, c);
 					events.register("keyboard,"+i, this);

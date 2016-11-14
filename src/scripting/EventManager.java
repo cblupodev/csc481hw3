@@ -30,14 +30,10 @@ public class EventManager {
 	}
 	
 	public void handle() {
-		ArrayList<GameObject> goListAll = registerMap.get("*");
 		while (eventPriorityQueue.peek() != null) { // handle all the events in one game loop, unles you run this in a new thread
 			Event e = eventPriorityQueue.remove();
 			ArrayList<GameObject> goList = registerMap.get(e.type);
 			for (GameObject go : goList) {
-				go.onEvent(e);
-			}
-			for (GameObject go : goListAll) {
 				go.onEvent(e);
 			}
 		}

@@ -12,6 +12,7 @@ public class Movable implements Component {
 	public float[] shape; // the object shape to use for drawing and updating
 	public long lastTick = -1; // keep track of the last tick to calculate how much to move between frames
 	public float movementFactor = 2; // controls the magnitude of movement, the lower the number the more magnitude
+	public String scriptFileName = null; 
 	
 	// have a drawing component
 	transient private Drawing drawing = new Drawing();

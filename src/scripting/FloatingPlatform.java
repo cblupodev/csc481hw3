@@ -11,7 +11,6 @@ public class FloatingPlatform extends Movable implements GameObject {
 	
 	public float width;
 	public float windowWidth;
-	private String scriptFileName = null;
 	
 	public FloatingPlatform(int windowWidth, int windowHeight, String scriptFileName) {
 		this.shape = new float[] {-1000, windowHeight*.7f, windowWidth * .2f, windowHeight*.025f};
@@ -22,7 +21,6 @@ public class FloatingPlatform extends Movable implements GameObject {
 			    this.scriptFileName = scriptFileName;
 				scripts.loadScript(scriptFileName);
 				scripts.bindArgument("game_object", this);
-				System.err.println("script load");
 			}
 		} catch (Exception e) {
 		}
