@@ -1,4 +1,4 @@
-package scripting;
+package secondgame;
 
 public class Event implements Comparable<Object> {
 

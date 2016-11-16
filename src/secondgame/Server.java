@@ -1,4 +1,4 @@
-package scripting;
+package secondgame;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -123,7 +123,7 @@ public class Server implements GameObject {
 							events.handle();
 						}
 						physics.collision();
-						characters.set(i, c.update());
+						//characters.set(i, c.update());
 						floatingPlatform.update();
 						physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
 						writeMessageToClient(createServerClientMessage(), out);
@@ -168,14 +168,10 @@ public class Server implements GameObject {
 	ServerClientMessage message = new ServerClientMessage(); // only allocate memory once
 	public ServerClientMessage createServerClientMessage() {
 		message.cShapes.clear();
-		message.cJumping.clear();
-		message.cjumpingAngle.clear();
 		message.cColor.clear();
 		message.floatPlatformShapeMessage = floatingPlatform.shape;
 		for (CharacterServer c : characters) {
 			message.cShapes.add(c.shape);
-			message.cJumping.add(c.jumping);
-			message.cjumpingAngle.add(c.jumpingAngle);
 			message.cColor.add(c.color);
 		}
 		return message;

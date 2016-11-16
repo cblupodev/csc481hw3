@@ -1,4 +1,4 @@
-package scripting;
+package secondgame;
 
 // The initialization message the server sends to the client
 

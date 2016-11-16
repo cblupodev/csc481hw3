@@ -1,4 +1,4 @@
-package scripting;
+package secondgame;
 
 import java.util.ArrayList;
 import java.util.Collection;

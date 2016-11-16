@@ -1,6 +1,6 @@
 package gameobjectmodel;
 
-import scripting.Event;
+import secondgame.Event;
 
 public interface GameObject {
 	

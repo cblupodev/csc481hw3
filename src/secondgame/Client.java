@@ -1,4 +1,4 @@
-package scripting;
+package secondgame;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class Client extends PApplet implements GameObject {
 	public static void main(String[] args) {
 		Client c = new Client();
 		c.address = args[0];
-		PApplet.main("scripting.Client");
+		PApplet.main("secondgame.Client");
 	}
 
 	
@@ -114,8 +114,6 @@ public class Client extends PApplet implements GameObject {
 				// update the characters
 				c = characters.get(i);
 				c.shape = message.cShapes.get(i);
-				c.jumping = message.cJumping.get(i);
-				c.jumpingAngle = message.cjumpingAngle.get(i);
 				c.color = message.cColor.get(i);
 				c.draw(this);
 			}

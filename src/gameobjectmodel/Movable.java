@@ -1,8 +1,8 @@
 package gameobjectmodel;
 
 import processing.core.PApplet;
-import scripting.ScriptManager;
-import scripting.Server;
+import secondgame.ScriptManager;
+import secondgame.Server;
 
 // for objects that move
 

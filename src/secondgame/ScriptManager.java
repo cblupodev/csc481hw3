@@ -1,4 +1,4 @@
-package scripting;
+package secondgame;
 
 import javax.script.*;
 

@@ -1,4 +1,4 @@
-package scripting;
+package secondgame;
 
 import gameobjectmodel.GameObject;
 import gameobjectmodel.Movable;
