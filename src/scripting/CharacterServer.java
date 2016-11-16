@@ -111,6 +111,7 @@ public class CharacterServer extends Movable implements GameObject {
 		shape[1] = originalY;
 	}
 	
+	// need this so the script can have access to creatig new events
 	public void createNewEvent(String type, int age, int priority) {
 		events.addEvent(new Event(type, null, age, priority));
 	}

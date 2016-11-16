@@ -26,7 +26,7 @@ public class Server implements GameObject {
 	public static CopyOnWriteArrayList<CharacterServer> characters = new CopyOnWriteArrayList<>(); // list of characters
 	public static CopyOnWriteArrayList<BufferedReader> inStream = new CopyOnWriteArrayList<>(); // list of socket input streams
 	public static CopyOnWriteArrayList<PrintWriter> outStream = new CopyOnWriteArrayList<>(); // list of socket output streams
-	public FloatingPlatform floatingPlatform = new FloatingPlatform(windowWidth, windowHeight, "C:/Users/Christopher Lupo/workspace/csc481hw4/src/scripting/fp.js");
+	public FloatingPlatform floatingPlatform;
 	private Physics physics;
 	private EventManager events;
 	private Time realtime;
@@ -40,13 +40,17 @@ public class Server implements GameObject {
 	private Type ServerClientInitializationMessageType; // type for json parsing
 	private Type EventType;
 	
+	public Server(String script1) {
+		floatingPlatform = new FloatingPlatform(windowWidth, windowHeight, script1);
+	}
+
 	public static void main(String[] args) {
-		Server m = new Server();
-		m.run();
+		Server m = new Server(args[0]);
+		m.run(args[1]);
 		PApplet.main("csc481hw2.section2.Server");
 	}
 	
-	public void run() {
+	public void run(String script2) {
 		// add collidable stuff to the physics component
 		events = new EventManager();
 		physics = new Physics(events);
@@ -89,7 +93,7 @@ public class Server implements GameObject {
 				// initialize the agent if the number of streams and agents aren't the same size
 				if (characters.size() != inStream.size()) { // add a character
 					
-					c = new CharacterServer(i, windowWidth, windowHeight, events, physics, "C:/Users/Christopher Lupo/workspace/csc481hw4/src/scripting/cs2.js");
+					c = new CharacterServer(i, windowWidth, windowHeight, events, physics, script2);
 					characters.add(i, c);
 					events.register("keyboard,"+i, c);
 					events.register("keyboard,"+i, this);

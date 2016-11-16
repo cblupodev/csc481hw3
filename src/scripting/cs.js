@@ -1,16 +1,15 @@
 function update(message) {
-	print("character serve script executing");
-	if (message === "LEFT") {
-		game_object.shape[0] -= parseFloat(game_object.diff) / game_object.movementFactor; // move x position left
-		game_object.diffTotal += game_object.diff;
-	}
-	if (message === "RIGHT") {
-		game_object.shape[0] += parseFloat(game_object.diff) / game_object.movementFactor; // move x position right
-		game_object.diffTotal += game_object.diff;
-	}
-	if (message === "SPACE") {
-		if (game_object.jumping == false) {
-			game_object.jumping = true;
-		}
+	if (e.type === ("keyboard," + game_object.id)) {
+		var s = e.parameters.toString();
+		game_object.updateInput(s);
+		game_object.update();
+	} else if (e.type === "collision," + game_object.id) {
+		game_object.createNewEvent("death," + game_object.id, 1, 0);
+	} else if (e.type === "death" + game_object.id) {
+		game_object.createNewEvent("spawn," + game_object.id, 2, 0);
+	} else if (e.type === "spawn," + game_object.id) {
+		game_object.setToSpawnPoint();
+	} else {
+		print("didn't find an event type");
 	}
 }
