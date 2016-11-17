@@ -28,8 +28,6 @@ public class Client extends PApplet implements GameObject {
 	private ArrayList<CharacterClient> characters = new ArrayList<>(); // list of characters to display to the screen
 	private int windowWidth;
 	private int windowHeight;
-	private float[] rectFoundation1;
-	private float[] rectFoundation2;
 	private int id;
 	
 	private Gson gson; // google json parser
@@ -78,8 +76,6 @@ public class Client extends PApplet implements GameObject {
 		try {
 				i = reader.readLine();
 				ServerClientInitializationMessage initMessage = gson.fromJson(i,ServerClientInitializationMessageType);
-				rectFoundation1 = initMessage.rectFoundation1;
-				rectFoundation2 = initMessage.rectFoundation2;
 				windowWidth = initMessage.windowWidth;
 				windowHeight = initMessage.windowHeight;
 				id = initMessage.id;
@@ -100,8 +96,6 @@ public class Client extends PApplet implements GameObject {
 		// render -->
 		background(0); // reset the background each frame
 		drawing.drawFill(new int[] { 221, 221, 221 }); // light gray
-		drawing.drawRect(rectFoundation1);
-		drawing.drawRect(rectFoundation2);
 		drawing.drawFill(new int[] { 50, 50, 50 }); // light gray
 		try {
 			fp.shape = message.floatPlatformShapeMessage;

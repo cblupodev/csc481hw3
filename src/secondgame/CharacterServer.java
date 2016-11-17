@@ -1,4 +1,4 @@
-package scripting;
+package secondgame;
 
 import java.util.Arrays;
 
@@ -22,12 +22,15 @@ public class CharacterServer extends Movable implements GameObject {
 	public CharacterServer(int id, int windowWidth, int windowHeight, EventManager events, Physics physics2, String scriptFileName) {
 		this.id = id;
 		this.type = "rect";
-		this.originalX = windowWidth * .5f;
-		this.originalY = windowHeight * .1f;
+		this.shape = new float[] { windowWidth * .1f, windowHeight - 50, 25, 50 };
+		this.originalX = shape[0];
+		this.originalY = shape[1];
+		//this.originalX = windowWidth * .5f;
+		//this.originalY = windowHeight * .1f;
 		// make it a triangle
-		this.shape = new float[] {originalX, originalY, 
-								  originalX + (windowWidth * .05f), originalY - (windowHeight * .05f), 
-								  originalX + (windowWidth * .1f), originalY };
+		//this.shape = new float[] {originalX, originalY, 
+			//					  originalX + (windowWidth * .05f), originalY - (windowHeight * .05f), 
+				//				  originalX + (windowWidth * .1f), originalY };
 		this.windowHeight = windowHeight;
 		this.events = events;
 		this.physics = physics2;
@@ -40,6 +43,10 @@ public class CharacterServer extends Movable implements GameObject {
 		} catch (Exception e) {
 		}
 	}
+	
+	public CharacterServer update() {
+		return this;
+	}
 
 	// send keyboard inputs to server
 	public boolean updateInput(String message) {
@@ -49,15 +56,11 @@ public class CharacterServer extends Movable implements GameObject {
 			float f= (float)diff / movementFactor;
 			if (message.equals("LEFT")) {
 				shape[0] -= f; // move x position left
-				shape[2] -= f;
-				shape[4] -= f;
 				diffTotal += diff;
 				return true;
 			}
 			if (message.equals("RIGHT")) {
 				shape[0] += f; // move x position left
-				shape[2] += f;
-				shape[4] += f;
 				diffTotal += diff;
 				return true;
 			}

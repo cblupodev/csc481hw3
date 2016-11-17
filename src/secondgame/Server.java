@@ -56,19 +56,10 @@ public class Server implements GameObject {
 		physics = new Physics(events);
 		realtime = new Time(null, 1, 0);
 		// initialize the static objects
-		Immovable rectFoundation1 = new Immovable("rect", new float[] {0, windowHeight*.9f, windowWidth*.75f, windowHeight*.1f});
-		Immovable rectFoundation2 = new Immovable("line", new float[] {windowWidth - (windowWidth*.15f), windowHeight*.9f, windowWidth*.15f, windowHeight*.1f});
 		Immovable boundaryLeft = new Immovable("line", new float[] {0, 0, 0, windowHeight});
 		Immovable boundaryRight = new Immovable("line", new float[] {windowWidth, 0, windowWidth, windowHeight});
-		Immovable rectPit = new Immovable("rect", new float[] {
-				rectFoundation1.shape[2]+20, 
-				rectFoundation1.shape[1],
-				windowWidth - (rectFoundation1.shape[2]+rectFoundation2.shape[2]) - 20, 
-				rectFoundation1.shape[3]
-		});
 		immovables.add(boundaryLeft);
 		immovables.add(boundaryRight);
-		immovables.add(rectPit);
 		gson = new Gson();
 		ServerClientInitializationMessageType = new TypeToken<ServerClientInitializationMessage>() {}.getType();
 		ServerClientMessageType = new TypeToken<ServerClientMessage>() {}.getType();
@@ -107,8 +98,6 @@ public class Server implements GameObject {
 					// send the non changing values to the client
 					ServerClientInitializationMessage scim = new ServerClientInitializationMessage();
 					scim.rectFloat = floatingPlatform.shape;
-					scim.rectFoundation1 = rectFoundation1.shape;
-					scim.rectFoundation2 = rectFoundation2.shape;
 					scim.windowWidth = windowWidth;
 					scim.windowHeight = windowHeight;
 					scim.id = i;
@@ -123,7 +112,7 @@ public class Server implements GameObject {
 							events.handle();
 						}
 						physics.collision();
-						//characters.set(i, c.update());
+						characters.set(i, c.update());
 						floatingPlatform.update();
 						physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
 						writeMessageToClient(createServerClientMessage(), out);
