@@ -26,6 +26,7 @@ public class Client extends PApplet implements GameObject {
 	private String address = ""; // socket address
 	private ServerClientMessage lastMessage; // remember the last address that was send from the client, so don't get NPE
 	private ArrayList<CharacterClient> characters = new ArrayList<>(); // list of characters to display to the screen
+	private ArrayList<MissleClient> missles = new ArrayList<>();
 	private int windowWidth;
 	private int windowHeight;
 	private int id;
@@ -88,6 +89,7 @@ public class Client extends PApplet implements GameObject {
 
 	FloatingPlatform fp = new FloatingPlatform(windowWidth, windowHeight, null); // keep reference so not allocating memory each time
 	CharacterClient c; // keep reference so not allocating memory each time
+	MissleClient mc; // keep reference so not allocating memory each time
 	public void draw() {
 		// read the character object from the server. the server does the updating
 		ServerClientMessage message;
@@ -100,7 +102,8 @@ public class Client extends PApplet implements GameObject {
 		try {
 			fp.shape = message.floatPlatformShapeMessage;
 			fp.draw(this);
-			for (int i = 0; i < message.cShapes.size(); i++) { // draw the characters
+			// draw the characters
+			for (int i = 0; i < message.cShapes.size(); i++) {
 				if (message.cShapes.size() > characters.size()) { // if a new client connected and thus character added, then add to the list
 					CharacterClient c = new CharacterClient(characters.size() - 1, windowWidth, windowHeight); // new id will always be the size - 1
 					characters.add(c);
@@ -110,6 +113,16 @@ public class Client extends PApplet implements GameObject {
 				c.shape = message.cShapes.get(i);
 				c.color = message.cColor.get(i);
 				c.draw(this);
+			}
+			// draw the missles
+			for (int i = 0; i < message.missles.size(); i++) {
+				if (message.missles.size() > missles.size()) {
+					MissleClient mc = new MissleClient(missles.size() - 1);
+					missles.add(mc);
+				}
+				mc = missles.get(i);
+				mc.shape = message.missles.get(i);
+				mc.draw(this);
 			}
 		} catch (NullPointerException e) { }
 	}

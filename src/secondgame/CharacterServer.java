@@ -15,6 +15,7 @@ public class CharacterServer extends Movable implements GameObject {
 	public int[] color; // character color
 	private int windowHeight; // sketch height
 	public int id; // identifier used for event management
+	public boolean missleInFlight = false;
 
 	private Physics physics = new Physics(); // keep reference to physics so it can update the character
 	public EventManager events;
@@ -22,7 +23,7 @@ public class CharacterServer extends Movable implements GameObject {
 	public CharacterServer(int id, int windowWidth, int windowHeight, EventManager events, Physics physics2, String scriptFileName) {
 		this.id = id;
 		this.type = "rect";
-		this.shape = new float[] { windowWidth * .1f, windowHeight - 50, 25, 50 };
+		this.shape = new float[] { windowWidth * .1f, windowHeight - 55, 25, 50 };
 		this.originalX = shape[0];
 		this.originalY = shape[1];
 		//this.originalX = windowWidth * .5f;
@@ -51,21 +52,25 @@ public class CharacterServer extends Movable implements GameObject {
 	// send keyboard inputs to server
 	public boolean updateInput(String message) {
 		initializeTick();
-		long diffTotal = 0;
+		//long diffTotal = 0;
 		if (continueUpdate() == true) {
 			float f= (float)diff / movementFactor;
 			if (message.equals("LEFT")) {
 				shape[0] -= f; // move x position left
-				diffTotal += diff;
+			//	diffTotal += diff;
 				return true;
 			}
 			if (message.equals("RIGHT")) {
 				shape[0] += f; // move x position left
-				diffTotal += diff;
+				//diffTotal += diff;
 				return true;
 			}
 			if (message.equals("SPACE")) {
-				// TODO create a missile
+				// only send on missle in flight at a time
+				if (missleInFlight == false) {
+					Server.missles.add(new MissleServer(shape[0] = 10, shape[1] - 2));
+					missleInFlight = true;
+				}
 				return true;
 			}
 		}
@@ -91,9 +96,13 @@ public class CharacterServer extends Movable implements GameObject {
 		shape[1] = originalY;
 	}
 	
-	// need this so the script can have access to creatig new events
+	// need this so the script can have access to creating new events
 	public void createNewEvent(String type, int age, int priority) {
 		events.addEvent(new Event(type, null, age, priority));
+	}
+	
+	public void removeMissleFromServer() {
+		Server.missles.remove(0);
 	}
 
 	@Override

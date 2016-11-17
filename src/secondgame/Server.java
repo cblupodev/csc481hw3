@@ -26,6 +26,7 @@ public class Server implements GameObject {
 	public static CopyOnWriteArrayList<CharacterServer> characters = new CopyOnWriteArrayList<>(); // list of characters
 	public static CopyOnWriteArrayList<BufferedReader> inStream = new CopyOnWriteArrayList<>(); // list of socket input streams
 	public static CopyOnWriteArrayList<PrintWriter> outStream = new CopyOnWriteArrayList<>(); // list of socket output streams
+	public static ArrayList<MissleServer> missles = new ArrayList<>();
 	public FloatingPlatform floatingPlatform;
 	private Physics physics;
 	private EventManager events;
@@ -58,8 +59,12 @@ public class Server implements GameObject {
 		// initialize the static objects
 		Immovable boundaryLeft = new Immovable("line", new float[] {0, 0, 0, windowHeight});
 		Immovable boundaryRight = new Immovable("line", new float[] {windowWidth, 0, windowWidth, windowHeight});
+		Immovable boundaryTop = new Immovable("line", new float[] {0, 0, windowWidth, 0});
+		Immovable boundaryBottom = new Immovable("line", new float[] {0, windowHeight, windowWidth, 0});
 		immovables.add(boundaryLeft);
 		immovables.add(boundaryRight);
+		immovables.add(boundaryTop);
+		immovables.add(boundaryBottom);
 		gson = new Gson();
 		ServerClientInitializationMessageType = new TypeToken<ServerClientInitializationMessage>() {}.getType();
 		ServerClientMessageType = new TypeToken<ServerClientMessage>() {}.getType();
@@ -88,7 +93,8 @@ public class Server implements GameObject {
 					characters.add(i, c);
 					events.register("keyboard,"+i, c);
 					events.register("keyboard,"+i, this);
-					events.register("collision,"+i, c);
+					events.register("character_collision,"+i, c);
+					events.register("missle_collision,"+i, c);
 					events.register("spawn,"+i, c);
 					events.register("death,"+i, c);
 					// select random character
@@ -115,6 +121,10 @@ public class Server implements GameObject {
 						characters.set(i, c.update());
 						floatingPlatform.update();
 						physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
+						// update the missles
+						for (MissleServer missle : missles) {
+							missle = missle.update();
+						}
 						writeMessageToClient(createServerClientMessage(), out);
 					}
 				}
@@ -158,7 +168,11 @@ public class Server implements GameObject {
 	public ServerClientMessage createServerClientMessage() {
 		message.cShapes.clear();
 		message.cColor.clear();
+		message.missles.clear();
 		message.floatPlatformShapeMessage = floatingPlatform.shape;
+		for (MissleServer missle : missles) {
+			message.missles.add(missle.shape);
+		}
 		for (CharacterServer c : characters) {
 			message.cShapes.add(c.shape);
 			message.cColor.add(c.color);

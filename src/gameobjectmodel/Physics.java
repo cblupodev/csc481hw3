@@ -2,13 +2,16 @@ package gameobjectmodel;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.google.gson.reflect.TypeToken;
 
 import processing.core.PApplet;
+import secondgame.CharacterServer;
 import secondgame.Event;
 import secondgame.EventManager;
 import secondgame.FloatingPlatform;
+import secondgame.MissleServer;
 import secondgame.Server;
 import secondgame.Time;
 
@@ -35,27 +38,55 @@ public class Physics extends PApplet implements Component {
 	
 	// detect collisions for all the characters
 	public void collision() {
-		ArrayList<Event> eventList = new ArrayList<>();
 		try {
+			// check character collisions
 			for (int j = 0; j < Server.characters.size(); j++) {
-				secondgame.CharacterServer c = Server.characters.get(j);
+				CharacterServer c = Server.characters.get(j);
 				// check immovables
 				for (int i = 0; i < Server.immovables.size(); i++) {
 					if (c.type.equals("rect")) { // if its a rectangle
 						if (Server.immovables.get(i).type.equals("rect")) {
 							if (rectRectWrap(Server.immovables.get(i).shape, c.shape)) {
-								events.addEvent(new Event("collision,"+j, null, 0, 0)); // TODO do i need this color paramter
+								events.addEvent(new Event("character_collision,"+j, null, 0, 0)); // TODO do i need this color paramter
 							}
-						} else if (Server.immovables.get(i).type.equals("line")) {
-							if (lineRectWrap(Server.immovables.get(i).shape, c.shape)) {
-								events.addEvent(new Event("collision,"+j, c.color, 0, 0));
+						} 
+						else if (Server.immovables.get(i).type.equals("line")) {
+							if (i != 2 && lineRectWrap(Server.immovables.get(i).shape, c.shape)) {
+								// skip checking the bottom boundary line, weird things for some reason
+								events.addEvent(new Event("character_collision,"+j, c.color, 0, 0));
+								System.err.println(2);
 							}
 						}
 					}
 				}
 				if (rectRectWrap(c.shape, floatingPlatform.shape)) {
-					events.addEvent(new Event("collision,"+j, c.color, 0, 0));
+					events.addEvent(new Event("character_collision,"+j, c.color, 0, 0));
 				} 
+			}
+			
+			//check missle collisions
+			for (int j = 0; j < Server.missles.size(); j++) {
+				MissleServer mc = Server.missles.get(j);
+				// check immovables
+				for (int i = 0; i < Server.immovables.size(); i++) {
+					if (mc.type.equals("rect")) { // if its a rectangle
+						if (Server.immovables.get(i).type.equals("rect")) {
+							if (rectRectWrap(Server.immovables.get(i).shape, mc.shape)) {
+								System.err.println(1);
+								events.addEvent(new Event("missle_collision,"+j, null, 0, 0)); // TODO do i need this color paramter
+							}
+						} else if (Server.immovables.get(i).type.equals("line")) {
+							if (lineRectWrap(Server.immovables.get(i).shape, mc.shape)) {
+								System.err.println(2);
+								events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
+							}
+						}
+					}
+				}
+				if (rectRectWrap(mc.shape, floatingPlatform.shape)) {
+					events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
+				} 
+				
 			}
 		} catch (Exception e) {
 			// this will probably catch the exceptions thrown from methods with mismatched shapes 
@@ -111,6 +142,7 @@ public class Physics extends PApplet implements Component {
 	  boolean right =  lineLine(x1,y1,x2,y2, rx+rw,ry, rx+rw,ry+rh);
 	  boolean top =    lineLine(x1,y1,x2,y2, rx,ry, rx+rw,ry);
 	  boolean bottom = lineLine(x1,y1,x2,y2, rx,ry+rh, rx+rw,ry+rh);
+	  //System.err.printf("%b %b %b %b\n", left, right, top, bottom);
 
 	  // if ANY of the above are true, the line 
 	  // has hit the rectangle

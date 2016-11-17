@@ -1,6 +1,7 @@
 types ↓
 keyboard,<id>
-collision,<id>
+missle_collision,<id>
+character_collision,<id>
 spawn,<id>
 death,<id>
 *

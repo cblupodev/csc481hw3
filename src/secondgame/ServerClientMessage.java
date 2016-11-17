@@ -11,11 +11,13 @@ public class ServerClientMessage {
 	float[]            floatPlatformShapeMessage;
 	ArrayList<float[]> cShapes = new ArrayList<>();
 	ArrayList<int[]>   cColor = new ArrayList<>();
+	public ArrayList<float[]> missles = new ArrayList<>();;
 	
-	public ServerClientMessage(float[] floatPlatformShapeMessage, ArrayList<float[]> cShapes, ArrayList<int[]> cColor) {
+	public ServerClientMessage(float[] floatPlatformShapeMessage, ArrayList<float[]> cShapes, ArrayList<int[]> cColor, ArrayList<float[]> missles) {
 		this.floatPlatformShapeMessage = floatPlatformShapeMessage;
 		this.cShapes = cShapes;
 		this.cColor = cColor;
+		this.missles = missles;
 	}
 
 	public ServerClientMessage() {
