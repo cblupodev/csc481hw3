@@ -51,10 +51,10 @@ public class Physics extends PApplet implements Component {
 							}
 						} 
 						else if (Server.immovables.get(i).type.equals("line")) {
-							if (i != 2 && lineRectWrap(Server.immovables.get(i).shape, c.shape)) {
+							if (i != 3 && lineRectWrap(Server.immovables.get(i).shape, c.shape)) {
+								// TODO this is bottom boundary check is hacky, fix it
 								// skip checking the bottom boundary line, weird things for some reason
 								events.addEvent(new Event("character_collision,"+j, c.color, 0, 0));
-								System.err.println(2);
 							}
 						}
 					}
@@ -76,7 +76,7 @@ public class Physics extends PApplet implements Component {
 								events.addEvent(new Event("missle_collision,"+j, null, 0, 0)); // TODO do i need this color paramter
 							}
 						} else if (Server.immovables.get(i).type.equals("line")) {
-							if (lineRectWrap(Server.immovables.get(i).shape, mc.shape)) {
+							if (i != 3 && lineRectWrap(Server.immovables.get(i).shape, mc.shape)) {
 								System.err.println(2);
 								events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
 							}
@@ -142,7 +142,6 @@ public class Physics extends PApplet implements Component {
 	  boolean right =  lineLine(x1,y1,x2,y2, rx+rw,ry, rx+rw,ry+rh);
 	  boolean top =    lineLine(x1,y1,x2,y2, rx,ry, rx+rw,ry);
 	  boolean bottom = lineLine(x1,y1,x2,y2, rx,ry+rh, rx+rw,ry+rh);
-	  //System.err.printf("%b %b %b %b\n", left, right, top, bottom);
 
 	  // if ANY of the above are true, the line 
 	  // has hit the rectangle

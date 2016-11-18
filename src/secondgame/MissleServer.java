@@ -9,7 +9,8 @@ public class MissleServer extends Movable implements GameObject {
 	
 	public MissleServer(float x, float y) {
 		this.shape = new float[] {x, y, 10, 20};
-		this.type = "rectangle";
+		this.type = "rect";
+		this.movementFactor = this.movementFactor/2;
 	}
 	
 	public MissleServer update() {

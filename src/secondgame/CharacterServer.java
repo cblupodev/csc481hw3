@@ -68,7 +68,7 @@ public class CharacterServer extends Movable implements GameObject {
 			if (message.equals("SPACE")) {
 				// only send on missle in flight at a time
 				if (missleInFlight == false) {
-					Server.missles.add(new MissleServer(shape[0] = 10, shape[1] - 2));
+					Server.missles.add(new MissleServer(shape[0] - 10, shape[1] - 2));
 					missleInFlight = true;
 				}
 				return true;

@@ -25,7 +25,7 @@ public class EventManager {
 		handlers.add(handler);
 	}
 	
-	public void raise(Event e) {
+	private void raise(Event e) {
 		eventPriorityQueue.add(e);
 	}
 	
@@ -41,7 +41,16 @@ public class EventManager {
 	
 	public void addEvent(Event e) {
 		e.timestamp = Server.gametime.getTime();
-		eventPriorityQueue.add(e);
+		boolean duplicate = false;
+		for (Event event : eventPriorityQueue) {
+			if (e.equals(event)) {
+				duplicate = true;
+				break;
+			}
+		}
+		if (duplicate == false) {
+			eventPriorityQueue.add(e);
+		}
 	}
 
 	public boolean isEmpty() {
