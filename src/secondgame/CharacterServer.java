@@ -26,12 +26,6 @@ public class CharacterServer extends Movable implements GameObject {
 		this.shape = new float[] { windowWidth * .1f, windowHeight - 55, 25, 50 };
 		this.originalX = shape[0];
 		this.originalY = shape[1];
-		//this.originalX = windowWidth * .5f;
-		//this.originalY = windowHeight * .1f;
-		// make it a triangle
-		//this.shape = new float[] {originalX, originalY, 
-			//					  originalX + (windowWidth * .05f), originalY - (windowHeight * .05f), 
-				//				  originalX + (windowWidth * .1f), originalY };
 		this.windowHeight = windowHeight;
 		this.events = events;
 		this.physics = physics2;
@@ -68,7 +62,7 @@ public class CharacterServer extends Movable implements GameObject {
 			if (message.equals("SPACE")) {
 				// only send on missle in flight at a time
 				if (missleInFlight == false) {
-					Server.missles.add(new MissleServer(shape[0] - 10, shape[1] - 2));
+					Server.missles.add(new MissleServer(shape[0] - 10, shape[1] - 2, true));
 					missleInFlight = true;
 				}
 				return true;

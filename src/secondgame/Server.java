@@ -27,7 +27,7 @@ public class Server implements GameObject {
 	public static CopyOnWriteArrayList<BufferedReader> inStream = new CopyOnWriteArrayList<>(); // list of socket input streams
 	public static CopyOnWriteArrayList<PrintWriter> outStream = new CopyOnWriteArrayList<>(); // list of socket output streams
 	public static ArrayList<MissleServer> missles = new ArrayList<>();
-	public FloatingPlatform floatingPlatform;
+	public Enemy floatingPlatform;
 	private Physics physics;
 	private EventManager events;
 	private Time realtime;
@@ -42,7 +42,7 @@ public class Server implements GameObject {
 	private Type EventType;
 	
 	public Server(String script1) {
-		floatingPlatform = new FloatingPlatform(windowWidth, windowHeight, script1);
+		floatingPlatform = new Enemy(windowWidth, windowHeight, script1);
 	}
 
 	public static void main(String[] args) {
@@ -120,7 +120,7 @@ public class Server implements GameObject {
 						physics.collision();
 						characters.set(i, c.update());
 						floatingPlatform.update();
-						physics.floatingPlatform = floatingPlatform; // update the platform in the physics component
+						physics.enemy = floatingPlatform; // update the platform in the physics component
 						// update the missles
 						for (MissleServer missle : missles) {
 							missle = missle.update();

@@ -2,17 +2,19 @@ package secondgame;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Random;
 
 import gameobjectmodel.GameObject;
 import gameobjectmodel.Movable;
 import processing.core.PApplet;
 
-public class FloatingPlatform extends Movable implements GameObject {
+public class Enemy extends Movable implements GameObject {
 	
 	public float width;
 	public float windowWidth;
+	public boolean missleInFlight = false;
 	
-	public FloatingPlatform(int windowWidth, int windowHeight, String scriptFileName) {
+	public Enemy(int windowWidth, int windowHeight, String scriptFileName) {
 		this.shape = new float[] {-1000, windowHeight*.7f, windowWidth * .2f, windowHeight*.025f};
 		this.width = windowWidth * .2f;
 		this.windowWidth = (float) windowWidth;
@@ -27,7 +29,7 @@ public class FloatingPlatform extends Movable implements GameObject {
 	}
 	
 	@Override
-	public FloatingPlatform update() {
+	public Enemy update() {
 		initializeTick();
 		
 		// do nothing if the ticks are the same
@@ -57,6 +59,22 @@ public class FloatingPlatform extends Movable implements GameObject {
 	public void draw(PApplet p) {
 		setParent(p);
 		getDrawing().drawRect(shape);
+	}
+	
+	public void fireMissle() {
+		if (shouldFireMissle()) {
+			System.err.println("fire");
+			Server.missles.add(new MissleServer(shape[0] - 10, shape[1] + (shape[3] + 2), false));
+			missleInFlight = true;
+		}
+	}
+	
+	// just randomly fire a missle
+	Random rand = new Random();
+	int select;
+	public boolean shouldFireMissle() {
+		select = rand.nextInt(100);
+		return select == 1;
 	}
 
 	@Override

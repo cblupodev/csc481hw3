@@ -87,7 +87,7 @@ public class Client extends PApplet implements GameObject {
 		}
 	}
 
-	FloatingPlatform fp = new FloatingPlatform(windowWidth, windowHeight, null); // keep reference so not allocating memory each time
+	Enemy fp = new Enemy(windowWidth, windowHeight, null); // keep reference so not allocating memory each time
 	CharacterClient c; // keep reference so not allocating memory each time
 	MissleClient mc; // keep reference so not allocating memory each time
 	public void draw() {

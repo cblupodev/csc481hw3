@@ -10,7 +10,7 @@ import processing.core.PApplet;
 import secondgame.CharacterServer;
 import secondgame.Event;
 import secondgame.EventManager;
-import secondgame.FloatingPlatform;
+import secondgame.Enemy;
 import secondgame.MissleServer;
 import secondgame.Server;
 import secondgame.Time;
@@ -18,7 +18,7 @@ import secondgame.Time;
 public class Physics extends PApplet implements Component {
 	
 	// reference the floating platform
-	public FloatingPlatform floatingPlatform;
+	public Enemy enemy;
 	private Type EventType = new TypeToken<Event>() {}.getType();
 	private EventManager events;
 	
@@ -36,58 +36,73 @@ public class Physics extends PApplet implements Component {
 		return radians(f);
 	}
 	
+	public void checkCharacterCollisionsWithImmovablesAndEnemies() {
+		// check character collisions
+		for (int j = 0; j < Server.characters.size(); j++) {
+			CharacterServer c = Server.characters.get(j);
+			// check immovables
+			for (int i = 0; i < Server.immovables.size(); i++) {
+				if (c.type.equals("rect")) { // if its a rectangle
+					if (Server.immovables.get(i).type.equals("rect")) {
+						if (rectRectWrap(Server.immovables.get(i).shape, c.shape)) {
+							events.addEvent(new Event("character_collision,"+j, null, 0, 0)); // TODO do i need this color paramter
+						}
+					} 
+					else if (Server.immovables.get(i).type.equals("line")) {
+						if (i != 3 && lineRectWrap(Server.immovables.get(i).shape, c.shape)) {
+							// TODO this is bottom boundary check is hacky, fix it
+							// skip checking the bottom boundary line, weird things for some reason
+							events.addEvent(new Event("character_collision,"+j, c.color, 0, 0));
+						}
+					}
+				}
+			}
+			if (rectRectWrap(c.shape, enemy.shape)) {
+				events.addEvent(new Event("character_collision,"+j, c.color, 0, 0));
+			} 
+		}
+		
+	}
+	
+	public void checkMissleCollisionsWithImmovables() {
+		//check missle collisions
+		for (int j = 0; j < Server.missles.size(); j++) {
+			MissleServer mc = Server.missles.get(j);
+			if (mc.shape[1] > Server.windowHeight + 100) { // remove missle if go past the bottom boundary
+				Server.missles.remove(j);
+				j -= 1;
+			}
+			if (mc.shape[1] < 0 - 100) { // remove missle if go past the top boundary
+				Server.missles.remove(j);
+				j -= 1;
+			}
+//			// check immovables
+//			for (int i = 0; i < Server.immovables.size(); i++) {
+//				if (mc.type.equals("rect")) { // if its a rectangle
+//					if (Server.immovables.get(i).type.equals("rect")) {
+//						if (rectRectWrap(Server.immovables.get(i).shape, mc.shape)) {
+//							System.err.println(7);
+//							events.addEvent(new Event("missle_collision,"+j, null, 0, 0)); // TODO do i need this color paramter
+//						}
+//					} else if (Server.immovables.get(i).type.equals("line")) {
+//						if (i != 3 && lineRectWrap(Server.immovables.get(i).shape, mc.shape)) {
+//							System.err.println(8);
+//							events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
+//						}
+//					}
+//				}
+//			}
+//			if (rectRectWrap(mc.shape, enemy.shape)) {
+//				events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
+//			}
+		}
+	}
+	
 	// detect collisions for all the characters
 	public void collision() {
 		try {
-			// check character collisions
-			for (int j = 0; j < Server.characters.size(); j++) {
-				CharacterServer c = Server.characters.get(j);
-				// check immovables
-				for (int i = 0; i < Server.immovables.size(); i++) {
-					if (c.type.equals("rect")) { // if its a rectangle
-						if (Server.immovables.get(i).type.equals("rect")) {
-							if (rectRectWrap(Server.immovables.get(i).shape, c.shape)) {
-								events.addEvent(new Event("character_collision,"+j, null, 0, 0)); // TODO do i need this color paramter
-							}
-						} 
-						else if (Server.immovables.get(i).type.equals("line")) {
-							if (i != 3 && lineRectWrap(Server.immovables.get(i).shape, c.shape)) {
-								// TODO this is bottom boundary check is hacky, fix it
-								// skip checking the bottom boundary line, weird things for some reason
-								events.addEvent(new Event("character_collision,"+j, c.color, 0, 0));
-							}
-						}
-					}
-				}
-				if (rectRectWrap(c.shape, floatingPlatform.shape)) {
-					events.addEvent(new Event("character_collision,"+j, c.color, 0, 0));
-				} 
-			}
-			
-			//check missle collisions
-			for (int j = 0; j < Server.missles.size(); j++) {
-				MissleServer mc = Server.missles.get(j);
-				// check immovables
-				for (int i = 0; i < Server.immovables.size(); i++) {
-					if (mc.type.equals("rect")) { // if its a rectangle
-						if (Server.immovables.get(i).type.equals("rect")) {
-							if (rectRectWrap(Server.immovables.get(i).shape, mc.shape)) {
-								System.err.println(1);
-								events.addEvent(new Event("missle_collision,"+j, null, 0, 0)); // TODO do i need this color paramter
-							}
-						} else if (Server.immovables.get(i).type.equals("line")) {
-							if (i != 3 && lineRectWrap(Server.immovables.get(i).shape, mc.shape)) {
-								System.err.println(2);
-								events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
-							}
-						}
-					}
-				}
-				if (rectRectWrap(mc.shape, floatingPlatform.shape)) {
-					events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
-				} 
-				
-			}
+			checkCharacterCollisionsWithImmovablesAndEnemies();
+			checkMissleCollisionsWithImmovables();
 		} catch (Exception e) {
 			// this will probably catch the exceptions thrown from methods with mismatched shapes 
 			System.out.println(e.getMessage());
