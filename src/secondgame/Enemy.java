@@ -15,8 +15,8 @@ public class Enemy extends Movable implements GameObject {
 	public boolean missleInFlight = false;
 	
 	public Enemy(int windowWidth, int windowHeight, String scriptFileName) {
-		this.shape = new float[] {-1000, windowHeight*.7f, windowWidth * .2f, windowHeight*.025f};
-		this.width = windowWidth * .2f;
+		this.shape = new float[] {-1000, windowHeight*.2f, windowWidth * .05f, windowHeight*.015f};
+		this.width = shape[2];
 		this.windowWidth = (float) windowWidth;
 		try {
 			if(scriptFileName != null) { 
@@ -28,14 +28,18 @@ public class Enemy extends Movable implements GameObject {
 		}
 	}
 	
+	public Enemy() {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
-	public Enemy update() {
+	public Enemy update(boolean columnEnd) {
 		initializeTick();
 		
 		// do nothing if the ticks are the same
 		if (continueUpdate() == true) {
 			if (scriptFileName != null) {
-				scripts.executeScript();
+				scripts.executeScript(columnEnd);
 			}
 			else {
 				shape[0] -= (float) diff / (movementFactor * 2); // the division just makes it arbitrarialy run a little slower
@@ -63,7 +67,6 @@ public class Enemy extends Movable implements GameObject {
 	
 	public void fireMissle() {
 		if (shouldFireMissle()) {
-			System.err.println("fire");
 			Server.missles.add(new MissleServer(shape[0] - 10, shape[1] + (shape[3] + 2), false));
 			missleInFlight = true;
 		}
@@ -73,7 +76,7 @@ public class Enemy extends Movable implements GameObject {
 	Random rand = new Random();
 	int select;
 	public boolean shouldFireMissle() {
-		select = rand.nextInt(100);
+		select = rand.nextInt(500);
 		return select == 1;
 	}
 

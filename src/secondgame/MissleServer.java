@@ -6,7 +6,7 @@ import gameobjectmodel.Movable;
 public class MissleServer extends Movable implements GameObject {
 	
 	public int id;
-	boolean friend = true;
+	public boolean friend = true;
 	
 	public MissleServer(float x, float y, boolean friend) {
 		this.shape = new float[] {x, y, 10, 20};

@@ -87,7 +87,8 @@ public class Client extends PApplet implements GameObject {
 		}
 	}
 
-	Enemy fp = new Enemy(windowWidth, windowHeight, null); // keep reference so not allocating memory each time
+	//Enemy fp = new Enemy(windowWidth, windowHeight, null); // keep reference so not allocating memory each time
+	//ArrayList<ArrayList<Enemy>> enemyColumns;
 	CharacterClient c; // keep reference so not allocating memory each time
 	MissleClient mc; // keep reference so not allocating memory each time
 	public void draw() {
@@ -100,8 +101,19 @@ public class Client extends PApplet implements GameObject {
 		drawing.drawFill(new int[] { 221, 221, 221 }); // light gray
 		drawing.drawFill(new int[] { 50, 50, 50 }); // light gray
 		try {
-			fp.shape = message.floatPlatformShapeMessage;
-			fp.draw(this);
+			for (ArrayList<float[]> far : message.enemyColumns) {
+				//ArrayList<Enemy> ear = new ArrayList<>();
+				//enemyColumns.add(ear);
+				//int i = 0;
+				for (float[] shape : far) {
+					Enemy e = new Enemy();
+					e.shape = shape;
+					//ear.add(e);
+					e.draw(this);
+				}
+			}
+			//fp.shape = message.floatPlatformShapeMessage;
+			//fp.draw(this);
 			// draw the characters
 			for (int i = 0; i < message.cShapes.size(); i++) {
 				if (message.cShapes.size() > characters.size()) { // if a new client connected and thus character added, then add to the list

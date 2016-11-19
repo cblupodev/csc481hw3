@@ -11,6 +11,7 @@ import secondgame.CharacterServer;
 import secondgame.Event;
 import secondgame.EventManager;
 import secondgame.Enemy;
+import secondgame.EnemyColumn;
 import secondgame.MissleServer;
 import secondgame.Server;
 import secondgame.Time;
@@ -18,9 +19,10 @@ import secondgame.Time;
 public class Physics extends PApplet implements Component {
 	
 	// reference the floating platform
-	public Enemy enemy;
+	//public Enemy enemy;
 	private Type EventType = new TypeToken<Event>() {}.getType();
 	private EventManager events;
+	public ArrayList<EnemyColumn> enemyColumns;
 	
 	public Physics(EventManager events) {
 		this.events = events;
@@ -57,9 +59,13 @@ public class Physics extends PApplet implements Component {
 					}
 				}
 			}
-			if (rectRectWrap(c.shape, enemy.shape)) {
-				events.addEvent(new Event("character_collision,"+j, c.color, 0, 0));
-			} 
+			for (EnemyColumn ec : enemyColumns) {
+				for (Enemy e : ec.enemyColumn) {
+					if (rectRectWrap(c.shape, e.shape)) {
+						events.addEvent(new Event("character_collision,"+j, c.color, 0, 0));
+					}
+				}
+			}
 		}
 		
 	}
@@ -73,6 +79,9 @@ public class Physics extends PApplet implements Component {
 				j -= 1;
 			}
 			if (mc.shape[1] < 0 - 100) { // remove missle if go past the top boundary
+				if (mc.friend == true) {
+					events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
+				}
 				Server.missles.remove(j);
 				j -= 1;
 			}

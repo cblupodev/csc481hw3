@@ -27,7 +27,8 @@ public class Server implements GameObject {
 	public static CopyOnWriteArrayList<BufferedReader> inStream = new CopyOnWriteArrayList<>(); // list of socket input streams
 	public static CopyOnWriteArrayList<PrintWriter> outStream = new CopyOnWriteArrayList<>(); // list of socket output streams
 	public static ArrayList<MissleServer> missles = new ArrayList<>();
-	public Enemy floatingPlatform;
+	public ArrayList<EnemyColumn> enemycolumns = new ArrayList<>();
+	//public Enemy enemy;
 	private Physics physics;
 	private EventManager events;
 	private Time realtime;
@@ -42,7 +43,17 @@ public class Server implements GameObject {
 	private Type EventType;
 	
 	public Server(String script1) {
-		floatingPlatform = new Enemy(windowWidth, windowHeight, script1);
+		// just make one column for now
+		for (int i = 0; i < 1; i++) {
+			enemycolumns.add(new EnemyColumn());
+			// just make two enemies for now
+			for (int j = 0; j < 1; j++) {
+				System.err.println("enemy add");
+				enemycolumns.get(i).add(new Enemy(windowWidth, windowHeight, script1));
+			}
+		}
+		//enemy = new Enemy(windowWidth, windowHeight, script1);
+		
 	}
 
 	public static void main(String[] args) {
@@ -103,7 +114,6 @@ public class Server implements GameObject {
 					
 					// send the non changing values to the client
 					ServerClientInitializationMessage scim = new ServerClientInitializationMessage();
-					scim.rectFloat = floatingPlatform.shape;
 					scim.windowWidth = windowWidth;
 					scim.windowHeight = windowHeight;
 					scim.id = i;
@@ -119,8 +129,11 @@ public class Server implements GameObject {
 						}
 						physics.collision();
 						characters.set(i, c.update());
-						floatingPlatform.update();
-						physics.enemy = floatingPlatform; // update the platform in the physics component
+						for (EnemyColumn ec : enemycolumns) {
+							ec.update();
+						}
+						//enemy.update();
+						physics.enemyColumns = enemycolumns; // update the platform in the physics component
 						// update the missles
 						for (MissleServer missle : missles) {
 							missle = missle.update();
@@ -169,7 +182,16 @@ public class Server implements GameObject {
 		message.cShapes.clear();
 		message.cColor.clear();
 		message.missles.clear();
-		message.floatPlatformShapeMessage = floatingPlatform.shape;
+		message.enemyColumns.clear();
+		// build the enemy column message
+		for (EnemyColumn ec : enemycolumns) {
+			ArrayList<float[]> far = new ArrayList<>();
+			message.enemyColumns.add(far);
+			for (Enemy e : ec.enemyColumn) {
+				far.add(e.shape);
+			}
+		}
+		//message.floatPlatformShapeMessage = enemy.shape;
 		for (MissleServer missle : missles) {
 			message.missles.add(missle.shape);
 		}

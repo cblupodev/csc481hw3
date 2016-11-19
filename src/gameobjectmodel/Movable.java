@@ -1,6 +1,7 @@
 package gameobjectmodel;
 
 import processing.core.PApplet;
+import secondgame.Enemy;
 import secondgame.ScriptManager;
 import secondgame.Server;
 
@@ -63,5 +64,10 @@ public class Movable implements Component {
 			return true;
 		}	
 		return false;
+	}
+
+	public Enemy update(boolean columnEnd) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

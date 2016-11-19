@@ -48,7 +48,7 @@ public class CharacterServer extends Movable implements GameObject {
 		initializeTick();
 		//long diffTotal = 0;
 		if (continueUpdate() == true) {
-			float f= (float)diff / movementFactor;
+			float f= (float)diff / (movementFactor * 3);
 			if (message.equals("LEFT")) {
 				shape[0] -= f; // move x position left
 			//	diffTotal += diff;
@@ -61,6 +61,7 @@ public class CharacterServer extends Movable implements GameObject {
 			}
 			if (message.equals("SPACE")) {
 				// only send on missle in flight at a time
+				System.err.println(missleInFlight);
 				if (missleInFlight == false) {
 					Server.missles.add(new MissleServer(shape[0] - 10, shape[1] - 2, true));
 					missleInFlight = true;
@@ -96,7 +97,9 @@ public class CharacterServer extends Movable implements GameObject {
 	}
 	
 	public void removeMissleFromServer() {
-		Server.missles.remove(0);
+		if (Server.missles.size() > 0) {
+			Server.missles.remove(0);
+		}
 	}
 
 	@Override
