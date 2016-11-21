@@ -13,9 +13,10 @@ public class Enemy extends Movable implements GameObject {
 	public float width;
 	public float windowWidth;
 	public boolean missleInFlight = false;
+	//public boolean movingLeft = true;
 	
-	public Enemy(int windowWidth, int windowHeight, String scriptFileName) {
-		this.shape = new float[] {-1000, windowHeight*.2f, windowWidth * .05f, windowHeight*.015f};
+	public Enemy(int windowWidth, int windowHeight, float initialX, float initialY, String scriptFileName) {
+		this.shape = new float[] {initialX, initialY, windowWidth * .05f, windowHeight*.015f};
 		this.width = shape[2];
 		this.windowWidth = (float) windowWidth;
 		try {
@@ -41,15 +42,21 @@ public class Enemy extends Movable implements GameObject {
 			if (scriptFileName != null) {
 				scripts.executeScript(columnEnd);
 			}
-			else {
-				shape[0] -= (float) diff / (movementFactor * 2); // the division just makes it arbitrarialy run a little slower
-				if (shape[0] + width < 0) { // wrap around to the others side
-					shape[0] = windowWidth;
-				}
-			}
-			return this;
 		}
-		return null;
+		return this;
+	}
+
+	@Override
+	public Enemy update(boolean columnEnd, float firstX) {
+		initializeTick();
+		
+		// do nothing if the ticks are the same
+		if (continueUpdate() == true) {
+			if (scriptFileName != null) {
+				scripts.executeScript(columnEnd, firstX);
+			}
+		}
+		return this;
 	}
 	
 	@Override
@@ -76,7 +83,7 @@ public class Enemy extends Movable implements GameObject {
 	Random rand = new Random();
 	int select;
 	public boolean shouldFireMissle() {
-		select = rand.nextInt(500);
+		select = rand.nextInt(100);
 		return select == 1;
 	}
 

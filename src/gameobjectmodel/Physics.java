@@ -85,25 +85,6 @@ public class Physics extends PApplet implements Component {
 				Server.missles.remove(j);
 				j -= 1;
 			}
-//			// check immovables
-//			for (int i = 0; i < Server.immovables.size(); i++) {
-//				if (mc.type.equals("rect")) { // if its a rectangle
-//					if (Server.immovables.get(i).type.equals("rect")) {
-//						if (rectRectWrap(Server.immovables.get(i).shape, mc.shape)) {
-//							System.err.println(7);
-//							events.addEvent(new Event("missle_collision,"+j, null, 0, 0)); // TODO do i need this color paramter
-//						}
-//					} else if (Server.immovables.get(i).type.equals("line")) {
-//						if (i != 3 && lineRectWrap(Server.immovables.get(i).shape, mc.shape)) {
-//							System.err.println(8);
-//							events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
-//						}
-//					}
-//				}
-//			}
-//			if (rectRectWrap(mc.shape, enemy.shape)) {
-//				events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
-//			}
 		}
 	}
 	

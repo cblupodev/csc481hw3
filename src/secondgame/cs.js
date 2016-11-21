@@ -6,9 +6,9 @@ function update(message) {
 	} else if (e.type === "character_collision," + game_object.id) {
 		game_object.createNewEvent("death," + game_object.id, 1, 0);
 	} 
-	else if (e.type === "missle_collision,0") {
+	else if (e.type.split(',')[0] === "missle_collision") {
 		game_object.missleInFlight = false;
-		game_object.removeMissleFromServer();
+		game_object.removeMissleFromServer(parseInt(e.type.split(',')[1]));
 	}
 	else if (e.type === "death" + game_object.id) {
 		game_object.createNewEvent("spawn," + game_object.id, 2, 0);

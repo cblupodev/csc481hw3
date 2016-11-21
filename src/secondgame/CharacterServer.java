@@ -61,9 +61,8 @@ public class CharacterServer extends Movable implements GameObject {
 			}
 			if (message.equals("SPACE")) {
 				// only send on missle in flight at a time
-				System.err.println(missleInFlight);
 				if (missleInFlight == false) {
-					Server.missles.add(new MissleServer(shape[0] - 10, shape[1] - 2, true));
+					Server.missles.add(new MissleServer(shape[0] + 10, shape[1] - 2, true));
 					missleInFlight = true;
 				}
 				return true;
@@ -96,9 +95,9 @@ public class CharacterServer extends Movable implements GameObject {
 		events.addEvent(new Event(type, null, age, priority));
 	}
 	
-	public void removeMissleFromServer() {
+	public void removeMissleFromServer(int index) {
 		if (Server.missles.size() > 0) {
-			Server.missles.remove(0);
+			Server.missles.remove(index);
 		}
 	}
 

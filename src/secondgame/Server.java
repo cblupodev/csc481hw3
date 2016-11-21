@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.xml.stream.events.EndElement;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -44,16 +46,11 @@ public class Server implements GameObject {
 	
 	public Server(String script1) {
 		// just make one column for now
-		for (int i = 0; i < 1; i++) {
-			enemycolumns.add(new EnemyColumn());
-			// just make two enemies for now
-			for (int j = 0; j < 1; j++) {
-				System.err.println("enemy add");
-				enemycolumns.get(i).add(new Enemy(windowWidth, windowHeight, script1));
-			}
+		float initialX = windowWidth - (windowWidth/2); //-1000
+		for (int i = 0; i < 3; i++) {
+			enemycolumns.add(new EnemyColumn(1, windowWidth, windowHeight, initialX, script1));
+			initialX += windowWidth*.15;
 		}
-		//enemy = new Enemy(windowWidth, windowHeight, script1);
-		
 	}
 
 	public static void main(String[] args) {
@@ -129,10 +126,17 @@ public class Server implements GameObject {
 						}
 						physics.collision();
 						characters.set(i, c.update());
+						// update the columns
+						EnemyColumn firstColumn = enemycolumns.get(0);
+						Enemy firstEnemy = firstColumn.enemyColumn.get(firstColumn.enemyColumn.size() - 1);
+						firstEnemy = firstEnemy.update(true);
+						// update the x position of the rest of the columns based on the first enemy so they are spaced out
+						float nextX = firstEnemy.shape[0];
+						//System.err.println(nextX);
 						for (EnemyColumn ec : enemycolumns) {
-							ec.update();
-						}
-						//enemy.update();
+							ec.update(nextX);
+							nextX += windowWidth*.1;
+						} 
 						physics.enemyColumns = enemycolumns; // update the platform in the physics component
 						// update the missles
 						for (MissleServer missle : missles) {
@@ -191,7 +195,6 @@ public class Server implements GameObject {
 				far.add(e.shape);
 			}
 		}
-		//message.floatPlatformShapeMessage = enemy.shape;
 		for (MissleServer missle : missles) {
 			message.missles.add(missle.shape);
 		}

@@ -70,4 +70,9 @@ public class Movable implements Component {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public Enemy update(boolean columnEnd, float firstX) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

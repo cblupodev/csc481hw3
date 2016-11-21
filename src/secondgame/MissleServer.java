@@ -9,7 +9,7 @@ public class MissleServer extends Movable implements GameObject {
 	public boolean friend = true;
 	
 	public MissleServer(float x, float y, boolean friend) {
-		this.shape = new float[] {x, y, 10, 20};
+		this.shape = new float[] {x, y, 2, 20};
 		this.type = "rect";
 		this.movementFactor = this.movementFactor/2;
 		this.friend = friend;
