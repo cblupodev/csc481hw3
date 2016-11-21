@@ -1,6 +1,7 @@
 package secondgame;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import gameobjectmodel.GameObject;
 import gameobjectmodel.Movable;
@@ -99,6 +100,11 @@ public class CharacterServer extends Movable implements GameObject {
 		if (Server.missles.size() > 0) {
 			Server.missles.remove(index);
 		}
+	}
+	
+	public void selectNewColor() {
+		Random r = new Random();
+		color = new int[] {r.nextInt(255), r.nextInt(255), r.nextInt(255)}; 
 	}
 
 	@Override

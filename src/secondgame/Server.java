@@ -29,12 +29,13 @@ public class Server implements GameObject {
 	public static CopyOnWriteArrayList<BufferedReader> inStream = new CopyOnWriteArrayList<>(); // list of socket input streams
 	public static CopyOnWriteArrayList<PrintWriter> outStream = new CopyOnWriteArrayList<>(); // list of socket output streams
 	public static ArrayList<MissleServer> missles = new ArrayList<>();
-	public ArrayList<EnemyColumn> enemycolumns = new ArrayList<>();
+	public static ArrayList<EnemyColumn> enemycolumns = new ArrayList<>();
 	//public Enemy enemy;
 	private Physics physics;
 	private EventManager events;
 	private Time realtime;
 	public static Time gametime;
+	private static String enemyScript = "";
 	
 	public static ArrayList<Immovable> immovables = new ArrayList<>(); // list of specific objects to collide with
 	public static ArrayList<Movable> movables = new ArrayList<>(); // not used yet
@@ -45,18 +46,23 @@ public class Server implements GameObject {
 	private Type EventType;
 	
 	public Server(String script1) {
+		enemyScript = script1;
 		// just make one column for now
-		float initialX = windowWidth - (windowWidth/2); //-1000
-		for (int i = 0; i < 3; i++) {
-			enemycolumns.add(new EnemyColumn(1, windowWidth, windowHeight, initialX, script1));
-			initialX += windowWidth*.15;
-		}
+		createEnemies();
 	}
 
+	public static void createEnemies() {
+		enemycolumns.clear();
+		float initialX = windowWidth - (windowWidth/2); //-1000
+		for (int i = 0; i < 3; i++) {
+			enemycolumns.add(new EnemyColumn(2, windowWidth, windowHeight, initialX, enemyScript));
+			initialX += windowWidth*.3;
+		}
+	}
+	
 	public static void main(String[] args) {
 		Server m = new Server(args[0]);
 		m.run(args[1]);
-		PApplet.main("csc481hw2.section2.Server");
 	}
 	
 	public void run(String script2) {
@@ -89,7 +95,8 @@ public class Server implements GameObject {
 		PrintWriter out = null;
 		CharacterServer c;
 		int y = 0;
-		while (true) { // never stop looking
+		boolean endGame = false ;
+		while (endGame == false) { // never stop looking
 			for (int i = 0; i < inStream.size(); i++) { // iterate over the client streams
 				while(outStream.size() != inStream.size()); // busy wait until they are the same size
 				out = outStream.get(i);
@@ -126,23 +133,27 @@ public class Server implements GameObject {
 						}
 						physics.collision();
 						characters.set(i, c.update());
-						// update the columns
-						EnemyColumn firstColumn = enemycolumns.get(0);
-						Enemy firstEnemy = firstColumn.enemyColumn.get(firstColumn.enemyColumn.size() - 1);
-						firstEnemy = firstEnemy.update(true);
-						// update the x position of the rest of the columns based on the first enemy so they are spaced out
-						float nextX = firstEnemy.shape[0];
-						//System.err.println(nextX);
-						for (EnemyColumn ec : enemycolumns) {
-							ec.update(nextX);
-							nextX += windowWidth*.1;
-						} 
-						physics.enemyColumns = enemycolumns; // update the platform in the physics component
-						// update the missles
-						for (MissleServer missle : missles) {
-							missle = missle.update();
+						if (enemycolumns.size() >= 1) {
+							// update the columns
+							EnemyColumn firstColumn = enemycolumns.get(0);
+							Enemy firstEnemy = firstColumn.enemyColumn.get(firstColumn.enemyColumn.size() - 1);
+							firstEnemy = firstEnemy.update(true);
+							// update the x position of the rest of the columns based on the first enemy so they are spaced out
+							float nextX = firstEnemy.shape[0];
+							for (EnemyColumn ec : enemycolumns) {
+								ec.update(nextX);
+								nextX += windowWidth * .1;
+							}
+							physics.enemyColumns = enemycolumns; // update the platform in the physics component
+							// update the missles
+							for (MissleServer missle : missles) {
+								missle = missle.update();
+							}
+							writeMessageToClient(createServerClientMessage(), out);
+						} else {
+							System.out.println("You destroyed all the enemies");
+							endGame = true;
 						}
-						writeMessageToClient(createServerClientMessage(), out);
 					}
 				}
 			}

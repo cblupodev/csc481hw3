@@ -10,10 +10,11 @@ function update(message) {
 		game_object.missleInFlight = false;
 		game_object.removeMissleFromServer(parseInt(e.type.split(',')[1]));
 	}
-	else if (e.type === "death" + game_object.id) {
+	else if (e.type === "death," + game_object.id) {
 		game_object.createNewEvent("spawn," + game_object.id, 2, 0);
 	} else if (e.type === "spawn," + game_object.id) {
 		game_object.setToSpawnPoint();
+		game_object.selectNewColor();
 	} else {
 		print("didn't find an event type");
 	}

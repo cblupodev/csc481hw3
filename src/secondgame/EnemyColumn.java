@@ -12,7 +12,7 @@ public class EnemyColumn implements GameObject {
 		float initialY = windowHeight*.2f;
 		for (int j = 0; j < numInColumn; j++) {
 			enemyColumn.add(new Enemy(windowWidth, windowHeight, initialX, initialY, script1));
-			initialY += windowHeight*.05;
+			initialY += windowHeight*.2;
 		}
 	}
 	

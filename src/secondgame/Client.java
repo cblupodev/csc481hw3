@@ -163,6 +163,7 @@ public class Client extends PApplet implements GameObject {
 				writer.println(out);
 			}
 		}
+		
 		writer.flush();
 	}
 

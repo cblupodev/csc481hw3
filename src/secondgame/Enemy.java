@@ -83,7 +83,7 @@ public class Enemy extends Movable implements GameObject {
 	Random rand = new Random();
 	int select;
 	public boolean shouldFireMissle() {
-		select = rand.nextInt(100);
+		select = rand.nextInt(500);
 		return select == 1;
 	}
 

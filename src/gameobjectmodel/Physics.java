@@ -3,6 +3,7 @@ package gameobjectmodel;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -73,17 +74,56 @@ public class Physics extends PApplet implements Component {
 	public void checkMissleCollisionsWithImmovables() {
 		//check missle collisions
 		for (int j = 0; j < Server.missles.size(); j++) {
-			MissleServer mc = Server.missles.get(j);
-			if (mc.shape[1] > Server.windowHeight + 100) { // remove missle if go past the bottom boundary
+			MissleServer ms = Server.missles.get(j);
+			if (ms.shape[1] > Server.windowHeight) { // remove missle if go past the bottom boundary
 				Server.missles.remove(j);
 				j -= 1;
 			}
-			if (mc.shape[1] < 0 - 100) { // remove missle if go past the top boundary
-				if (mc.friend == true) {
+			if (ms.shape[1] < 0) { // remove missle if go past the top boundary
+				if (ms.friend == true) {
 					events.addEvent(new Event("missle_collision,"+j, null, 0, 0));
 				}
 				Server.missles.remove(j);
 				j -= 1;
+			}
+		}
+	}
+	
+	public void checkFriendlyMissleWithEnemies() {
+		for (int i = 0; i < Server.missles.size(); i++) { // go over all the missles
+			MissleServer ms = Server.missles.get(i);
+			if (ms.friend == true) {
+				for (int j = 0; j < Server.enemycolumns.size(); j++) { // go over all the enemy columns
+					EnemyColumn ec = Server.enemycolumns.get(j);
+					for (int k = 0; k < ec.enemyColumn.size(); k++) { // go over all the enemies
+						Enemy e = ec.enemyColumn.get(k);
+						if (rectRectWrap(ms.shape, e.shape)) {
+							// they collided
+							// remove the enemy
+							Server.enemycolumns.get(j).enemyColumn.remove(k);
+							if (Server.enemycolumns.get(j).enemyColumn.size() == 0) {
+								// all enemies in the column are destroyed
+								Server.enemycolumns.remove(j);
+							}
+							// remove the missle
+							events.addEvent(new Event("missle_collision,"+i, null, 0, 0));
+						}
+					}
+				} 
+			}
+		}
+	}
+	
+	public void checkEnemyMisslesWithCharacter() {
+		for (int i = 0; i < Server.missles.size(); i++) { // go over all the missles
+			MissleServer ms = Server.missles.get(i);
+			if (ms.friend == false) {
+				if (rectRectWrap(Server.characters.get(0).shape, ms.shape)) {
+					// character collided with enemy missle
+					// give it a new color to signify this
+					events.addEvent(new Event("death,0", null, 0, 0));
+					Server.createEnemies();
+				}
 			}
 		}
 	}
@@ -93,6 +133,8 @@ public class Physics extends PApplet implements Component {
 		try {
 			checkCharacterCollisionsWithImmovablesAndEnemies();
 			checkMissleCollisionsWithImmovables();
+			checkFriendlyMissleWithEnemies();
+			checkEnemyMisslesWithCharacter();
 		} catch (Exception e) {
 			// this will probably catch the exceptions thrown from methods with mismatched shapes 
 			System.out.println(e.getMessage());
