@@ -1,3 +1,5 @@
+Link to project description [csc481-f16-hw4.pdf - github.com](https://github.com/cblupodev/csc481hw3/blob/master/csc481-f16-hw4.pdf)
+
 The packages are labeled by section however its really all one big thing
 
 I included a screencast of the code running in DEMO.mp4
